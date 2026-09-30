@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bamboo Prop — My Properties</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+:root{--ink:#0b0b0c;--muted:#77777d;--line:rgba(0,0,0,.09);--glass:rgba(255,255,255,.72);--shadow:0 18px 50px rgba(0,0,0,.07);--radius:20px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:radial-gradient(circle at 15% 0%,rgba(0,0,0,.045),transparent 30%),radial-gradient(circle at 90% 25%,rgba(0,0,0,.035),transparent 28%),#f7f7f5;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.32),transparent 45%,rgba(0,0,0,.015));z-index:-1}
+.site-header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:22px 34px;background:rgba(247,247,245,.72);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);border-bottom:1px solid rgba(0,0,0,.055)}
+.brand{margin:0;font-family:"Bamboo Prop","Bodoni Moda",Georgia,serif;font-size:clamp(28px,3vw,42px);font-weight:600;letter-spacing:-.055em;line-height:.9}
+.header-note{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:#8b8b90}
+main{padding:42px 34px 80px}
+.section-heading{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
+.section-heading h1{margin:0;font-size:clamp(22px,2.2vw,31px);letter-spacing:-.045em;font-weight:650}
+.count{color:var(--muted);font-size:13px}
+.property-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
+.property-card{position:relative;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:var(--glass);box-shadow:var(--shadow);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.property-card:hover{transform:translateY(-3px);box-shadow:0 24px 60px rgba(0,0,0,.1);border-color:rgba(0,0,0,.15)}
+.preview-shell,.placeholder-preview{position:relative;height:168px;overflow:hidden;background:#ededeb;border-bottom:1px solid var(--line)}
+.preview-shell iframe{display:block;width:100%;height:100%;border:0;background:white}
+.preview-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:7px;padding:15px;color:white;background:linear-gradient(to top,rgba(0,0,0,.58),transparent 65%);pointer-events:none;opacity:0}
+.preview-fallback a{width:fit-content;color:white;pointer-events:auto;text-decoration:none;font-size:11px;padding:7px 10px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(255,255,255,.13);backdrop-filter:blur(10px)}
+.placeholder-preview{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(224,224,221,.55)),repeating-linear-gradient(45deg,transparent 0 12px,rgba(0,0,0,.025) 12px 13px)}
+.placeholder-number{font-size:29px;font-weight:650;letter-spacing:-.06em}.placeholder-label{font-size:10px;color:#9a9a9e;letter-spacing:.13em;text-transform:uppercase}
+.property-info{padding:14px 15px 15px}.property-info h2{margin:0 0 4px;font-size:15px;font-weight:600;letter-spacing:-.025em}
+.property-amount{font-size:13px;font-weight:600;margin-bottom:10px;letter-spacing:-.02em}.meta-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.location{min-width:0;display:flex;align-items:center;gap:6px;color:#707075;text-decoration:none;font-size:11px;line-height:1.3}
+.location span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.copy-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;border:0;padding:5px 7px;border-radius:999px;color:#171719;background:rgba(0,0,0,.055);font:inherit;font-size:10px;cursor:pointer;transition:background .18s ease,transform .18s ease}
+.copy-btn:hover{background:rgba(0,0,0,.1)}.copy-btn:active{transform:scale(.96)}.copy-btn.copied{color:white;background:#111}
+@media(max-width:1250px){.property-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:950px){.property-grid{grid-template-columns:repeat(3,minmax(0,1fr))}main,.site-header{padding-left:22px;padding-right:22px}}
+@media(max-width:680px){.site-header{padding:18px}.header-note{display:none}main{padding:30px 14px 60px}.property-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.preview-shell,.placeholder-preview{height:145px}.property-info{padding:12px}}
+@media(max-width:430px){.property-grid{grid-template-columns:1fr}}
+
+.property-card.status-sold,.property-card.status-tenanted{background:rgba(220,248,226,.72)}
+.property-status{position:absolute;top:11px;right:11px;z-index:10;padding:6px 9px;border:1px solid rgba(50,190,90,.22);border-radius:999px;background:rgba(255,255,255,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#18b84b;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+
+.empty-preview{display:flex;align-items:center;justify-content:center}
+.add-property-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.68);color:#171719;border-radius:999px;padding:9px 13px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s ease}
+.add-property-btn:hover{background:#111;color:white;transform:translateY(-1px)}
+.add-property-btn .plus{font-size:17px;font-weight:400;line-height:10px}
+.empty-location{opacity:.48}.copy-btn:disabled{opacity:.45;cursor:default}
+.property-preview-link{display:block;position:relative;width:100%;height:100%}.property-preview-link img{display:block;width:100%;height:100%;object-fit:cover}
+.preview-overlay{position:absolute;inset:auto 0 0;padding:26px 14px 13px;background:linear-gradient(to top,rgba(0,0,0,.65),transparent);color:white;font-size:10px;opacity:0;transition:opacity .2s}.property-preview-link:hover .preview-overlay{opacity:1}
+.modal-backdrop{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.28);backdrop-filter:blur(12px);opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s}.modal-backdrop.open{opacity:1;visibility:visible}
+.modal{position:relative;width:min(460px,100%);padding:28px;border:1px solid rgba(255,255,255,.65);border-radius:24px;background:rgba(255,255,255,.84);box-shadow:0 30px 90px rgba(0,0,0,.18);backdrop-filter:blur(30px)}
+.modal-close{position:absolute;top:14px;right:15px;border:0;background:rgba(0,0,0,.06);width:30px;height:30px;border-radius:50%;font-size:20px;cursor:pointer;color:#222}
+.modal-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#888;margin-bottom:7px}.modal h2{margin:0;font-size:25px;letter-spacing:-.045em}.modal-subtitle{font-size:12px;color:#777;margin:7px 0 18px}
+.modal input{width:100%;height:46px;border:1px solid rgba(0,0,0,.12);border-radius:13px;background:rgba(255,255,255,.72);padding:0 14px;font:inherit;font-size:12px;outline:none}.modal input:focus{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+.modal-status{height:23px;padding-top:7px;font-size:11px;color:#777}.confirm-btn{width:100%;margin-top:8px;border:0;border-radius:13px;background:#111;color:white;height:45px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+
+
+.property-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.property-title-row h2{margin:0!important}
+.favorite-btn{position:absolute;top:11px;left:11px;z-index:10;flex:0 0 auto;border:0;background:transparent;padding:2px;font-size:23px;line-height:1;color:#777;cursor:pointer;transition:transform .18s ease,color .18s ease}
+.favorite-btn:hover{transform:scale(1.08);color:#111}
+.favorite-btn.active{color:#e53935}
+.heading-left{display:flex;align-items:baseline;gap:14px;min-width:0}
+.property-controls{display:flex;align-items:center;gap:8px;margin-left:auto}
+.property-controls select{height:36px;border:1px solid rgba(0,0,0,.09);border-radius:999px;background:rgba(255,255,255,.72);padding:0 30px 0 12px;color:#222;font:inherit;font-size:11px;outline:none;backdrop-filter:blur(12px);cursor:pointer}
+@media(max-width:780px){.section-heading{align-items:flex-start;flex-direction:column}.property-controls{width:100%;margin-left:0}.property-controls select{flex:1;min-width:0}}
+@media(max-width:430px){.property-controls{flex-direction:column}.property-controls select{width:100%}}
+
+</style>
+</head>
+<body>
+<header class="site-header"><div class="brand">Bamboo Prop</div><div class="header-note">Property workspace</div></header>
+<main>
+<div class="section-heading">
+  <div class="heading-left"><h1>My Properties</h1><span class="count" id="propertyCount">250 listings · 50 rows</span></div>
+  <div class="property-controls">
+    <select id="locationFilter" aria-label="Filter by location">
+      <option value="all">All locations</option>
+      <optgroup label="Cities / Areas">
+        <option value="Kuala Lumpur">Kuala Lumpur</option>
+        <option value="Petaling Jaya">Petaling Jaya</option>
+        <option value="Shah Alam">Shah Alam</option>
+        <option value="Subang Jaya">Subang Jaya</option>
+        <option value="Puchong">Puchong</option>
+        <option value="Putrajaya">Putrajaya</option>
+        <option value="Cyberjaya">Cyberjaya</option>
+        <option value="Klang">Klang</option>
+        <option value="Kajang">Kajang</option>
+        <option value="Seremban">Seremban</option>
+        <option value="Ipoh">Ipoh</option>
+        <option value="George Town">George Town</option>
+        <option value="Johor Bahru">Johor Bahru</option>
+        <option value="Melaka">Melaka</option>
+        <option value="Kota Kinabalu">Kota Kinabalu</option>
+        <option value="Kuching">Kuching</option>
+      </optgroup>
+      <optgroup label="States">
+        <option value="Selangor">Selangor</option>
+        <option value="Kuala Lumpur">Kuala Lumpur</option>
+        <option value="Johor">Johor</option>
+        <option value="Penang">Penang</option>
+        <option value="Perak">Perak</option>
+        <option value="Melaka">Melaka</option>
+        <option value="Negeri Sembilan">Negeri Sembilan</option>
+        <option value="Pahang">Pahang</option>
+        <option value="Kedah">Kedah</option>
+        <option value="Kelantan">Kelantan</option>
+        <option value="Terengganu">Terengganu</option>
+        <option value="Perlis">Perlis</option>
+        <option value="Sabah">Sabah</option>
+        <option value="Sarawak">Sarawak</option>
+        <option value="Putrajaya">Putrajaya</option>
+        <option value="Labuan">Labuan</option>
+      </optgroup>
+      <option value="favourites">Favourites</option>
+    </select>
+    <select id="sortProperties" aria-label="Sort properties">
+      <option value="default">Sort: Default</option>
+      <option value="price-high">Price: High to Low</option>
+      <option value="price-low">Price: Low to High</option>
+      <option value="location">Location: A–Z</option>
+      <option value="favourites">Favourites First</option>
+    </select>
+  </div>
+</div>
+<section class="property-grid" id="propertyGrid" aria-label="My properties"></section>
+</main>
+<script>
+const TOTAL_PROPERTIES = 250;
+const grid = document.getElementById("propertyGrid");
+let activeCard = null;
+
+const propertyState = JSON.parse(localStorage.getItem("bambooPropProperties") || "{}");
+const favoriteState = JSON.parse(localStorage.getItem("bambooPropFavorites") || "{}");
+const deletedState = JSON.parse(localStorage.getItem("bambooPropDeleted") || "{}");
+
+function savePropertyState(){
+  localStorage.setItem("bambooPropProperties",JSON.stringify(propertyState));
+}
+function saveFavoriteState(){
+  localStorage.setItem("bambooPropFavorites",JSON.stringify(favoriteState));
+}
+function restoreFavorite(index,card){
+  const button=card.querySelector(".favorite-btn");
+  const active=!!favoriteState[String(index)];
+  button.classList.toggle("active",active);
+  button.textContent=active?"♥":"♡";
+}
+function toggleFavorite(index,card){
+  const key=String(index);
+  favoriteState[key]=!favoriteState[key];
+  if(!favoriteState[key])delete favoriteState[key];
+  saveFavoriteState();
+  restoreFavorite(index,card);
+  applyPropertyControls();
+}
+function propertyPrice(id){
+  const value=propertyState[String(id)]?.title || "";
+  const number=parseFloat(String(value).replace(/[^0-9.]/g,""));
+  return Number.isFinite(number)?number:-1;
+}
+function propertyLocation(id){
+  return String(propertyState[String(id)]?.location || "").toLowerCase();
+}
+function applyPropertyControls(){
+  const filter=document.getElementById("locationFilter")?.value || "all";
+  const sort=document.getElementById("sortProperties")?.value || "default";
+  const cards=[...grid.children];
+  cards.forEach(card=>{
+    const id=card.dataset.propertyId;
+    const location=propertyLocation(id);
+    const isFav=!!favoriteState[id];
+    let visible=!deletedState[id];
+    if(visible&&filter==="favourites") visible=isFav;
+    else if(filter!=="all") visible=location.includes(String(filter).toLowerCase());
+    card.style.display=visible?"":"none";
+  });
+  const visibleCards=cards.filter(card=>card.style.display!=="none");
+  visibleCards.sort((a,b)=>{
+    const ai=a.dataset.propertyId, bi=b.dataset.propertyId;
+    if(sort==="price-high")return propertyPrice(bi)-propertyPrice(ai);
+    if(sort==="price-low")return propertyPrice(ai)-propertyPrice(bi);
+    if(sort==="location")return propertyLocation(ai).localeCompare(propertyLocation(bi));
+    if(sort==="favourites")return Number(!!favoriteState[bi])-Number(!!favoriteState[ai]);
+    return Number(ai)-Number(bi);
+  });
+  visibleCards.forEach(card=>grid.appendChild(card));
+  const count=document.getElementById("propertyCount");
+  if(count){
+    const filledCount=Object.keys(propertyState).filter(id=>!deletedState[id]).length;
+    count.textContent=(TOTAL_PROPERTIES-filledCount)+" property spaces left";
+  }
+}
+
+
+function makeCard(index) {
+  const card = document.createElement("article");
+  card.className = "property-card";
+  card.dataset.propertyId = String(index);
+  card.innerHTML = `
+    <div class="preview-shell empty-preview">
+      <button class="add-property-btn" type="button"><span class="plus">+</span><span>Add Property</span></button>
+    </div>
+    <div class="property-info">
+      <div class="property-title-row">
+        <h2>Property ${String(index).padStart(3,"0")}</h2>
+        <button class="favorite-btn" type="button" aria-label="Favourite property" title="Favourite property">♡</button>
+      </div>
+      <div class="property-amount">RM —</div>
+      <div class="meta-row">
+        <span class="location empty-location">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>
+          <span>Location</span>
+        </span>
+        <button class="copy-btn" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 1 2 2"/></svg>
+          <span>Copy</span>
+        </button>
+        <a class="copy-btn visit-btn" href="#" target="_blank" rel="noopener" aria-label="Visit property">
+          <span>Visit</span>
+        </a>
+      </div>
+    </div>`;
+  card.querySelector(".add-property-btn").onclick = (e) => { e.stopPropagation(); openModal(card); };
+  card.querySelector(".favorite-btn").onclick = (e) => {
+    e.stopPropagation();
+    toggleFavorite(index, card);
+  };
+  card.onclick = (e) => {
+    if(e.target.closest("button") || e.target.closest("a")) return;
+    window.location.href = "properties.html?id=" + encodeURIComponent(index);
+  };
+  restoreFavorite(index, card);
+  return card;
+}
+
+const savedPropertyIds=Object.keys(propertyState)
+  .filter(id=>!deletedState[id]&&Number.isInteger(Number(id))&&Number(id)>=1&&Number(id)<=TOTAL_PROPERTIES)
+  .map(Number)
+  .sort((a,b)=>a-b);
+if(!savedPropertyIds.length){
+  Object.keys(deletedState).forEach(id=>delete deletedState[id]);
+  localStorage.setItem("bambooPropDeleted",JSON.stringify(deletedState));
+}
+const nextPropertyId=savedPropertyIds.length?Math.max(...savedPropertyIds)+1:1;
+[...new Set([...savedPropertyIds,nextPropertyId].filter(id=>id<=TOTAL_PROPERTIES))]
+  .forEach(i=>grid.appendChild(makeCard(i)));
+document.getElementById("locationFilter").addEventListener("change",applyPropertyControls);
+document.getElementById("sortProperties").addEventListener("change",applyPropertyControls);
+applyPropertyControls();
+
+restoreSavedProperties();
+
+const modal = document.createElement("div");
+modal.className = "modal-backdrop";
+modal.innerHTML = `
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="Close">×</button>
+    <div class="modal-eyebrow">Bamboo Prop</div>
+    <h2>Add property</h2>
+    <p class="modal-subtitle">Upload or paste a screenshot of the property listing.</p>
+    <input id="propertyScreenshot" type="file" accept="image/*" autocomplete="off">
+    <input id="propertyTitle" type="text" placeholder="Property title" autocomplete="off" required>
+    <input id="propertyLink" type="url" placeholder="Insert link to property" autocomplete="off">
+    <div id="modalStatus" class="modal-status"></div>
+    <button id="confirmProperty" class="confirm-btn" type="button">Confirm</button>
+  </div>`;
+document.body.appendChild(modal);
+
+const screenshotInput = document.getElementById("propertyScreenshot");
+const status = document.getElementById("modalStatus");
+
+function openModal(card){activeCard=card;screenshotInput.value="";document.getElementById("propertyTitle").value="";document.getElementById("propertyLink").value="";status.textContent="";modal.classList.add("open");setTimeout(()=>screenshotInput.focus(),80)}
+function closeModal(){modal.classList.remove("open");activeCard=null}
+modal.querySelector(".modal-close").onclick=closeModal;
+modal.onclick=e=>{if(e.target===modal)closeModal()};
+
+
+function restoreSavedProperties(){
+  Object.entries(propertyState).forEach(([id,data])=>{
+    const card=grid.querySelector('[data-property-id="'+CSS.escape(id)+'"]');
+    if(card && data && data.image) setProperty(card,data);
+  });
+}
+
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+function setProperty(card,data){
+  if(!data || !card)return;
+  const preview=card.querySelector(".preview-shell");
+  preview.classList.remove("empty-preview");
+  preview.innerHTML=`<a class="property-preview-link" href="properties.html?id=${encodeURIComponent(card.dataset.propertyId)}">
+    <img src="${data.image}" alt="${escapeHtml(data.title)}" referrerpolicy="no-referrer">
+    <div class="preview-overlay"><span>Open property ↗</span></div></a>`;
+
+  propertyState[card.dataset.propertyId]=data;
+  savePropertyState();
+  const nextId=Math.max(...Object.keys(propertyState).map(id=>Number(id)).filter(id=>Number.isFinite(id)),0)+1;
+  if(nextId<=TOTAL_PROPERTIES&&!grid.querySelector('[data-property-id="'+nextId+'"]')){
+    grid.appendChild(makeCard(nextId));
+  }
+  delete deletedState[card.dataset.propertyId];
+  card.classList.toggle("status-sold",data.status==="sold");
+  card.classList.toggle("status-tenanted",data.status==="tenanted");
+  const existingStatus=card.querySelector(".property-status");
+  if(existingStatus)existingStatus.remove();
+  if(data.status==="sold"||data.status==="tenanted"){
+    const status=document.createElement("div");
+    status.className="property-status";
+    status.textContent=data.status==="sold"?"Sold":"Tenanted";
+    card.appendChild(status);
+  }
+  card.querySelector("h2").textContent=data.name||"Property "+String(card.dataset.propertyId).padStart(3,"0");
+  const amount=card.querySelector(".property-amount");
+  if(amount)amount.textContent=data.price||data.title||"RM —";
+  const oldLocation=card.querySelector(".location");
+  oldLocation.outerHTML=`<a class="location" href="${data.map}" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>
+    <span>${escapeHtml(data.location)}</span></a>`;
+
+  const copy=card.querySelector(".copy-btn");
+  copy.disabled=false;
+  copy.dataset.copy=data.url;
+  copy.onclick=async()=>{
+    try{await navigator.clipboard.writeText(data.url)}catch{
+      const a=document.createElement("textarea");a.value=data.url;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();
+    }
+    const s=copy.querySelector("span");copy.classList.add("copied");s.textContent="Copied";
+    setTimeout(()=>{copy.classList.remove("copied");s.textContent="Copy"},1300);
+  };
+
+  const visit=card.querySelector(".visit-btn");
+  visit.href=data.url||"#";
+  applyPropertyControls();
+}
+
+
+function chooseLocation(text){
+  const lines=text.split(/\r?\n/).map(v=>v.replace(/\s+/g," ").trim()).filter(v=>v.length>=3&&v.length<=120);
+  const states="Selangor|Kuala Lumpur|Johor|Penang|Pulau Pinang|Perak|Melaka|Negeri Sembilan|Pahang|Kedah|Kelantan|Terengganu|Perlis|Sabah|Sarawak|Putrajaya|Labuan";
+  const re=new RegExp(`([A-Za-z][A-Za-z .'-]{2,60}),\\s*(${states})\\b`,"i");
+  for(const line of lines){const m=line.match(re);if(m)return `${m[1].trim()}, ${m[2].trim()}`;}
+  const tagged=lines.find(line=>/(location|address|area|property location|located in|located at)/i.test(line));
+  if(tagged)return tagged.replace(/^(location|address|area|property location|located in|located at)\s*[:\-]?\s*/i,"").trim();
+  return "Location";
+}
+
+function chooseTitle(text){
+  const normalized=String(text||"").replace(/\u00a0/g," ");
+  const matches=normalized.match(/RM\s*\d[\d,]*(?:\.\d{1,2})?/gi)||[];
+
+  if(matches.length){
+    const parsed=matches.map(value=>({
+      text:value.replace(/\s+/g," ").trim(),
+      number:parseFloat(value.replace(/RM\s*/i,"").replace(/,/g,""))
+    })).filter(value=>Number.isFinite(value.number));
+    if(parsed.length){
+      parsed.sort((a,b)=>b.number-a.number);
+      return parsed[0].text;
+    }
+  }
+
+  return "RM —";
+}
+
+async function extractTitleFromScreenshot(file){
+  if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please check your internet connection.");
+  const worker=await Tesseract.createWorker("eng");
+  try{
+    const result=await worker.recognize(file);
+    return chooseTitle(result.data.text || "");
+  }finally{
+    await worker.terminate();
+  }
+}
+
+document.getElementById("confirmProperty").onclick=async()=>{
+  if(!activeCard)return;
+  const file=screenshotInput.files&&screenshotInput.files[0];
+  const propertyLink=document.getElementById("propertyLink").value.trim();
+  if(!file||!file.type.startsWith("image/")){status.textContent="Please select a property screenshot.";return}
+  const propertyTitle=document.getElementById("propertyTitle").value.trim();
+  if(!propertyTitle){status.textContent="Please enter a property title.";return}
+  if(propertyLink&&!/^https?:\/\//i.test(propertyLink)){status.textContent="Please enter a valid property link.";return}
+  status.textContent="Reading screenshot…";
+  try{
+    const image=await new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=()=>{
+        const img=new Image();
+        img.onload=()=>{
+          const canvas=document.createElement("canvas");
+          const ctx=canvas.getContext("2d");
+          const cropHeight=Math.max(1,Math.floor(img.height*0.62));
+          canvas.width=img.width;
+          canvas.height=cropHeight;
+          ctx.drawImage(img,0,0,img.width,cropHeight,0,0,img.width,cropHeight);
+          resolve(canvas.toDataURL("image/jpeg",0.92));
+        };
+        img.onerror=()=>reject(new Error("Unable to process screenshot."));
+        img.src=reader.result;
+      };
+      reader.onerror=()=>reject(new Error("Unable to read screenshot."));
+      reader.readAsDataURL(file);
+    });
+    status.textContent="Extracting price and location…";
+    if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please check your internet connection.");
+    const worker=await Tesseract.createWorker("eng");
+    let text="";
+    try{text=(await worker.recognize(file)).data.text||""}finally{await worker.terminate()}
+    const title=propertyTitle;
+    const price=chooseTitle(text);
+    const location=chooseLocation(text);
+    const finalUrl=propertyLink||"#";
+    const map=location!=="Location"?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location):"#";
+    setProperty(activeCard,{url:finalUrl,name:title,title:price,price,location,map,image});
+    closeModal();
+  }catch(error){status.textContent=error.message||"Unable to process screenshot."}
+};
+document.addEventListener("paste",e=>{
+  if(!modal.classList.contains("open"))return;
+  const items=e.clipboardData?.items||[];
+  for(const item of items){
+    if(item.type.startsWith("image/")){
+      const file=item.getAsFile();
+      const transfer=new DataTransfer();
+      transfer.items.add(file);
+      screenshotInput.files=transfer.files;
+      status.textContent="Screenshot pasted. Click Confirm.";
+      e.preventDefault();
+      break;
+    }
+  }
+});
+
+screenshotInput.addEventListener("change",()=>{if(screenshotInput.files?.length)status.textContent="Screenshot selected. Click Confirm."});
+</script>
+</body>
+</html>

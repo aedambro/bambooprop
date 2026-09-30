@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bamboo Prop — Property</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b0b0c;--muted:#77777d;--line:rgba(0,0,0,.09);--glass:rgba(255,255,255,.72);--shadow:0 18px 50px rgba(0,0,0,.07);--radius:20px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:radial-gradient(circle at 15% 0%,rgba(0,0,0,.045),transparent 30%),radial-gradient(circle at 90% 25%,rgba(0,0,0,.035),transparent 28%),#f7f7f5;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.32),transparent 45%,rgba(0,0,0,.015));z-index:-1}
+.site-header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:22px 34px;background:rgba(247,247,245,.72);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);border-bottom:1px solid rgba(0,0,0,.055)}
+.brand{margin:0;font-family:"Bamboo Prop","Bodoni Moda",Georgia,serif;font-size:clamp(28px,3vw,42px);font-weight:600;letter-spacing:-.055em;line-height:.9}
+.header-note{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:#8b8b90}
+main{max-width:1120px;margin:0 auto;padding:42px 34px 80px}
+.back{display:inline-flex;align-items:center;gap:7px;color:#77777d;text-decoration:none;font-size:11px;margin-bottom:18px}
+.back:hover{color:#111}
+.property-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:25px}
+.property-head h1{margin:0;font-size:clamp(25px,3vw,38px);letter-spacing:-.055em;font-weight:650}
+.property-head .location{margin-top:8px;color:#707075;font-size:12px}
+.property-price{font-size:clamp(17px,2vw,23px);font-weight:650;letter-spacing:-.045em;white-space:nowrap}
+.layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,.7fr);gap:18px}
+.panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--glass);box-shadow:var(--shadow);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);padding:20px}
+.preview{overflow:hidden;border-radius:16px;background:#ededeb;border:1px solid var(--line);min-height:360px}
+.preview img{display:block;width:100%;height:100%;min-height:360px;object-fit:cover}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 15px}
+.section-title h2{margin:0;font-size:15px;letter-spacing:-.025em}
+.add-contact,.save-note,.add-viewing{border:0;border-radius:999px;background:#111;color:#fff;padding:9px 13px;font:inherit;font-size:10px;font-weight:600;cursor:pointer}
+.add-contact:hover,.save-note:hover,.add-viewing:hover{opacity:.86}
+.contacts{display:flex;flex-direction:column;gap:10px}
+.contact-card{padding:13px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.5)}
+.contact-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.contact-name{font-size:13px;font-weight:600}
+.contact-phone{font-size:10px;color:#777;margin-top:3px}
+.whatsapp-btn{border:0;background:rgba(0,0,0,.055);color:#111;border-radius:999px;padding:7px 10px;font:inherit;font-size:10px;cursor:pointer}
+.note-row{display:flex;gap:7px;margin-top:10px}
+.note-input{flex:1;min-width:0;height:35px;border:1px solid rgba(0,0,0,.09);border-radius:10px;background:rgba(255,255,255,.68);padding:0 10px;font:inherit;font-size:10px;outline:none}
+.saved-note{font-size:10px;color:#777;margin-top:7px;line-height:1.4}
+.calendar-panel{margin-top:18px}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.calendar-month{font-size:14px;font-weight:600}
+.calendar-nav{display:flex;gap:5px}
+.calendar-nav button{border:0;width:29px;height:29px;border-radius:50%;background:rgba(0,0,0,.055);cursor:pointer}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.day-name{text-align:center;font-size:9px;color:#999;padding:4px 0}
+.day{position:relative;min-height:39px;border:1px solid transparent;border-radius:10px;background:rgba(255,255,255,.35);font:inherit;font-size:10px;cursor:pointer}
+.day:hover{border-color:rgba(0,0,0,.12)}
+.day.today{background:#111;color:#fff}
+.day.has-viewing:after{content:"";position:absolute;bottom:5px;left:50%;width:4px;height:4px;border-radius:50%;background:currentColor;transform:translateX(-50%)}
+.day.empty{background:transparent;cursor:default}
+.viewings{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.viewing{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border-radius:12px;background:rgba(255,255,255,.5);font-size:10px}
+.viewing-date{font-weight:600}.viewing-person{color:#777}
+.modal-backdrop{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.28);backdrop-filter:blur(12px);opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s}
+.modal-backdrop.open{opacity:1;visibility:visible}
+.modal{position:relative;width:min(420px,100%);padding:25px;border:1px solid rgba(255,255,255,.65);border-radius:24px;background:rgba(255,255,255,.86);box-shadow:0 30px 90px rgba(0,0,0,.18);backdrop-filter:blur(30px)}
+.modal-close{position:absolute;top:13px;right:14px;border:0;background:rgba(0,0,0,.06);width:30px;height:30px;border-radius:50%;font-size:20px;cursor:pointer;color:#222}
+.modal h2{margin:0;font-size:23px;letter-spacing:-.045em}
+.modal-subtitle{font-size:11px;color:#777;margin:6px 0 17px}
+.modal select,.modal input{width:100%;height:43px;border:1px solid rgba(0,0,0,.1);border-radius:12px;background:rgba(255,255,255,.72);padding:0 12px;font:inherit;font-size:11px;outline:none;margin-bottom:9px}
+.modal .confirm{width:100%;height:43px;border:0;border-radius:12px;background:#111;color:#fff;font:inherit;font-size:11px;font-weight:600;cursor:pointer;margin-top:3px}
+.property-actions{display:flex;align-items:center;gap:8px;margin-bottom:18px}.property-action{border:1px solid rgba(0,0,0,.09);border-radius:999px;background:rgba(255,255,255,.68);color:#111;padding:9px 13px;font:inherit;font-size:10px;font-weight:600;cursor:pointer;backdrop-filter:blur(12px)}.property-action:hover{background:rgba(0,0,0,.06)}.property-action.delete{color:#b42318}.property-action.delete:hover{background:rgba(180,35,24,.07)}
+@media(max-width:800px){main{padding:30px 18px 60px}.layout{grid-template-columns:1fr}.preview,.preview img{min-height:280px}.property-head{flex-direction:column}.property-price{white-space:normal}}
+@media(max-width:430px){.site-header{padding:18px}.header-note{display:none}main{padding:25px 14px 50px}.day{min-height:35px}}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="brand">Bamboo Prop</div><div class="header-note">Property workspace</div></header>
+<main>
+<a class="back" href="index.html">← My Properties</a>
+<div class="property-head">
+  <div><h1 id="propertyTitle">Property</h1><div class="location" id="propertyLocation">Location</div></div>
+  <div class="property-price" id="propertyPrice">RM —</div>
+</div>
+<div class="property-actions">
+  <button class="property-action" id="markSold" type="button">Mark Sold</button>
+  <button class="property-action" id="markTenanted" type="button">Mark Tenanted</button>
+  <button class="property-action delete" id="deleteProperty" type="button">Delete Listing</button>
+</div>
+
+<div class="layout">
+  <div>
+    <div class="panel preview" id="propertyPreview"></div>
+
+    <div class="panel calendar-panel">
+      <div class="section-title"><h2>Viewings</h2><button class="add-viewing" id="addViewing" type="button">Add Viewing</button></div>
+      <div class="calendar-head">
+        <button class="calendar-nav" id="prevMonth" type="button">‹</button>
+        <div class="calendar-month" id="calendarMonth"></div>
+        <button class="calendar-nav" id="nextMonth" type="button">›</button>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+      <div class="viewings" id="viewings"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="section-title"><h2>Contacts</h2><button class="add-contact" id="addContact" type="button">Add Contact</button></div>
+    <div class="contacts" id="contacts"></div>
+  </div>
+</div>
+</main>
+
+<div class="modal-backdrop" id="viewingModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="closeViewing" type="button">×</button>
+    <h2>Add viewing</h2>
+    <p class="modal-subtitle" id="viewingDateLabel">Choose who and what time.</p>
+    <select id="viewingContact"></select>
+    <input id="viewingTime" type="time">
+    <button class="confirm" id="saveViewing" type="button">Save Viewing</button>
+  </div>
+</div>
+
+<script>
+const params=new URLSearchParams(location.search);
+const propertyId=params.get("id")||"1";
+const properties=JSON.parse(localStorage.getItem("bambooPropProperties")||"{}");
+const property=properties[propertyId]||{title:"Property "+String(propertyId).padStart(3,"0"),location:"Location",price:"RM —"};
+const allContacts=JSON.parse(localStorage.getItem("bambooPropContacts")||"{}");
+const contacts=allContacts[propertyId]||[];
+const allViewings=JSON.parse(localStorage.getItem("bambooPropViewings")||"{}");
+const viewings=allViewings[propertyId]||[];
+
+document.getElementById("propertyTitle").textContent=property.name||"Property";
+document.getElementById("propertyLocation").textContent=property.location||"Location";
+document.getElementById("propertyPrice").textContent=property.price||"RM —";
+
+function savePropertyStatus(status){
+  if(!properties[propertyId])return;
+  const label=status==="sold"?"SOLD":"TENANTED";
+  if(!confirm("Mark this property as "+label+"?"))return;
+  properties[propertyId].status=status;
+  localStorage.setItem("bambooPropProperties",JSON.stringify(properties));
+  window.location.href="index.html";
+}
+
+document.getElementById("markSold").onclick=()=>savePropertyStatus("sold");
+document.getElementById("markTenanted").onclick=()=>savePropertyStatus("tenanted");
+
+document.getElementById("deleteProperty").onclick=()=>{
+  if(!confirm("Delete this listing permanently?"))return;
+  delete properties[propertyId];
+  localStorage.setItem("bambooPropProperties",JSON.stringify(properties));
+  const favorites=JSON.parse(localStorage.getItem("bambooPropFavorites")||"{}");
+  delete favorites[propertyId];
+  localStorage.setItem("bambooPropFavorites",JSON.stringify(favorites));
+  const contactsStore=JSON.parse(localStorage.getItem("bambooPropContacts")||"{}");
+  delete contactsStore[propertyId];
+  localStorage.setItem("bambooPropContacts",JSON.stringify(contactsStore));
+  const viewingsStore=JSON.parse(localStorage.getItem("bambooPropViewings")||"{}");
+  delete viewingsStore[propertyId];
+  localStorage.setItem("bambooPropViewings",JSON.stringify(viewingsStore));
+  const deleted=JSON.parse(localStorage.getItem("bambooPropDeleted")||"{}");
+  deleted[propertyId]=true;
+  localStorage.setItem("bambooPropDeleted",JSON.stringify(deleted));
+  window.location.href="index.html";
+};
+
+const preview=document.getElementById("propertyPreview");
+if(property.image){
+  const img=document.createElement("img");
+  img.src=property.image;
+  img.alt=property.title||"Property";
+  preview.appendChild(img);
+}else{
+  preview.innerHTML='<div style="min-height:360px;display:flex;align-items:center;justify-content:center;color:#999;font-size:11px">No property preview</div>';
+}
+
+function saveContacts(){
+  allContacts[propertyId]=contacts;
+  localStorage.setItem("bambooPropContacts",JSON.stringify(allContacts));
+}
+function saveViewings(){
+  allViewings[propertyId]=viewings;
+  localStorage.setItem("bambooPropViewings",JSON.stringify(allViewings));
+}
+function cleanPhone(phone){
+  let p=String(phone||"").replace(/[^\d+]/g,"");
+  if(p.startsWith("+"))return p;
+  if(p.startsWith("0"))return "+60"+p.slice(1);
+  return p;
+}
+function whatsapp(phone){
+  const p=cleanPhone(phone).replace(/\D/g,"");
+  if(!p)return;
+  window.open("https://wa.me/"+p,"_blank");
+}
+function renderContacts(){
+  const box=document.getElementById("contacts");
+  if(!contacts.length){
+    box.innerHTML='<div style="font-size:11px;color:#888;padding:12px 2px">No contacts added yet.</div>';
+    return;
+  }
+  box.innerHTML="";
+  contacts.forEach((contact,index)=>{
+    const card=document.createElement("div");
+    card.className="contact-card";
+    card.innerHTML=`
+      <div class="contact-top">
+        <div><div class="contact-name"></div><div class="contact-phone"></div></div>
+        <button class="whatsapp-btn" type="button">WhatsApp</button>
+      </div>
+      <div class="note-row"><input class="note-input" placeholder="Add a note" value="${String(contact.note||"").replace(/"/g,"&quot;")}"><button class="save-note" type="button">Save</button></div>
+      ${contact.note?`<div class="saved-note">${escapeHtml(contact.note)}</div>`:""}`;
+    card.querySelector(".contact-name").textContent=contact.name||"Contact";
+    card.querySelector(".contact-phone").textContent=contact.phone||"";
+    card.querySelector(".whatsapp-btn").onclick=()=>whatsapp(contact.phone);
+    card.querySelector(".save-note").onclick=()=>{
+      contacts[index].note=card.querySelector(".note-input").value.trim();
+      saveContacts();
+      renderContacts();
+    };
+    box.appendChild(card);
+  });
+  populateViewingContacts();
+}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+document.getElementById("addContact").onclick=async()=>{
+  if(!("contacts" in navigator)){
+    alert("Contact selection is not supported by this browser. Please open Bamboo Prop on a supported mobile browser.");
+    return;
+  }
+  try{
+    const selected=await navigator.contacts.select(["name","tel"],{multiple:true});
+    selected.forEach(c=>{
+      const name=(c.name&&c.name[0])||"Contact";
+      const phone=(c.tel&&c.tel[0])||"";
+      if(phone && !contacts.some(x=>x.phone===phone)){
+        contacts.push({name,phone,note:""});
+      }
+    });
+    saveContacts();
+    renderContacts();
+  }catch(error){}
+};
+
+let calendarDate=new Date();
+let selectedDate="";
+const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+function dateKey(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function renderCalendar(){
+  const grid=document.getElementById("calendarGrid");
+  const year=calendarDate.getFullYear(),month=calendarDate.getMonth();
+  document.getElementById("calendarMonth").textContent=months[month]+" "+year;
+  grid.innerHTML="";
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{
+    const el=document.createElement("div");el.className="day-name";el.textContent=d;grid.appendChild(el);
+  });
+  const first=new Date(year,month,1).getDay();
+  const total=new Date(year,month+1,0).getDate();
+  for(let i=0;i<first;i++){const e=document.createElement("div");e.className="day empty";grid.appendChild(e)}
+  for(let d=1;d<=total;d++){
+    const date=new Date(year,month,d),key=dateKey(date);
+    const el=document.createElement("button");el.type="button";el.className="day";el.textContent=d;
+    if(key===dateKey(new Date()))el.classList.add("today");
+    if(viewings.some(v=>v.date===key))el.classList.add("has-viewing");
+    el.onclick=()=>openViewing(key);
+    grid.appendChild(el);
+  }
+}
+function renderViewings(){
+  const box=document.getElementById("viewings");
+  const sorted=[...viewings].sort((a,b)=>(a.date+" "+a.time).localeCompare(b.date+" "+b.time));
+  box.innerHTML="";
+  if(!sorted.length){
+    box.innerHTML='<div style="font-size:10px;color:#888">No viewings scheduled.</div>';
+    return;
+  }
+  sorted.forEach(v=>{
+    const person=contacts.find(c=>c.id===v.contactId)||contacts.find(c=>c.phone===v.phone);
+    const el=document.createElement("div");el.className="viewing";
+    el.innerHTML=`<div><div class="viewing-date">${v.date} · ${v.time}</div><div class="viewing-person">${escapeHtml(person?.name||v.name||"Contact")}</div></div><button class="whatsapp-btn" type="button">WhatsApp</button>`;
+    el.querySelector("button").onclick=()=>whatsapp(person?.phone||v.phone);
+    box.appendChild(el);
+  });
+}
+function populateViewingContacts(){
+  const select=document.getElementById("viewingContact");
+  select.innerHTML=contacts.length?contacts.map((c,i)=>`<option value="${i}">${escapeHtml(c.name||"Contact")}</option>`).join(""):'<option value="">Add a contact first</option>';
+}
+function openViewing(key){
+  if(!contacts.length){
+    alert("Add a contact first, then you can schedule the viewing.");
+    return;
+  }
+  selectedDate=key;
+  document.getElementById("viewingDateLabel").textContent="Viewing on "+key;
+  document.getElementById("viewingTime").value="10:00";
+  populateViewingContacts();
+  document.getElementById("viewingModal").classList.add("open");
+}
+document.getElementById("addViewing").onclick=()=>openViewing(dateKey(calendarDate));
+document.getElementById("prevMonth").onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()};
+document.getElementById("nextMonth").onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar()};
+document.getElementById("closeViewing").onclick=()=>document.getElementById("viewingModal").classList.remove("open");
+document.getElementById("viewingModal").onclick=e=>{if(e.target.id==="viewingModal")e.currentTarget.classList.remove("open")};
+document.getElementById("saveViewing").onclick=()=>{
+  const index=parseInt(document.getElementById("viewingContact").value,10);
+  if(!contacts[index])return;
+  const time=document.getElementById("viewingTime").value;
+  if(!time)return;
+  viewings.push({date:selectedDate,time,contactId:contacts[index].id||contacts[index].phone,phone:contacts[index].phone,name:contacts[index].name});
+  saveViewings();
+  document.getElementById("viewingModal").classList.remove("open");
+  renderCalendar();
+  renderViewings();
+};
+
+contacts.forEach((c,i)=>{if(!c.id)c.id=c.phone||String(i)});
+saveContacts();
+renderContacts();
+renderCalendar();
+renderViewings();
+</script>
+</body>
+</html>
