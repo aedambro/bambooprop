@@ -42,7 +42,7 @@ main{max-width:1120px;margin:0 auto;padding:42px 34px 80px}
 .property-notes{margin-top:18px}
 .property-notes-input{width:100%;min-height:90px;border:1px solid rgba(0,0,0,.09);border-radius:12px;background:rgba(255,255,255,.68);padding:10px;font:inherit;font-size:10px;outline:none;resize:vertical}
 .property-notes-input:focus{border-color:rgba(0,0,0,.16)}
-.property-notes-save{margin-top:9px;border:0;border-radius:999px;background:#111;color:#fff;padding:9px 13px;font:inherit;font-size:10px;font-weight:600;cursor:pointer}
+.property-notes-save{display:block;margin:9px 0 0 auto;border:0;border-radius:999px;background:#111;color:#fff;padding:9px 13px;font:inherit;font-size:10px;font-weight:600;cursor:pointer}
 .property-notes-save:hover{opacity:.86}
 .property-notes-saved{font-size:10px;color:#777;margin-top:7px;line-height:1.4}
 .calendar-panel{margin-top:18px}
@@ -96,7 +96,6 @@ main{max-width:1120px;margin:0 auto;padding:42px 34px 80px}
       <div class="section-title"><h2>Notes</h2></div>
       <textarea class="property-notes-input" id="propertyNotes" placeholder="Add a note"></textarea>
       <button class="property-notes-save" id="savePropertyNotes" type="button">Save</button>
-      <div class="property-notes-saved" id="propertyNotesSaved"></div>
     </div>
 
     <div class="panel calendar-panel">
@@ -144,7 +143,6 @@ document.getElementById("propertyTitle").textContent=property.name||"Property";
 document.getElementById("propertyLocation").textContent=property.location||"Location";
 document.getElementById("propertyPrice").textContent=property.price||"RM —";
 document.getElementById("propertyNotes").value=allPropertyNotes[propertyId]||"";
-document.getElementById("propertyNotesSaved").textContent=allPropertyNotes[propertyId]?"Saved":"";
 
 function savePropertyStatus(status){
   if(!properties[propertyId])return;
@@ -233,8 +231,7 @@ function renderContacts(){
         <div><div class="contact-name"></div><div class="contact-phone"></div></div>
         <button class="whatsapp-btn" type="button">WhatsApp</button>
       </div>
-      <div class="note-row"><input class="note-input" placeholder="Add a note" value="${String(contact.note||"").replace(/"/g,"&quot;")}"><button class="save-note" type="button">Save</button></div>
-      ${contact.note?`<div class="saved-note">${escapeHtml(contact.note)}</div>`:""}`;
+      <div class="note-row"><input class="note-input" placeholder="Add a note" value="${String(contact.note||"").replace(/"/g,"&quot;")}"><button class="save-note" type="button">Save</button></div>`;
     card.querySelector(".contact-name").textContent=contact.name||"Contact";
     card.querySelector(".contact-phone").textContent=contact.phone||"";
     card.querySelector(".whatsapp-btn").onclick=()=>whatsapp(contact.phone);
@@ -271,7 +268,6 @@ document.getElementById("addContact").onclick=async()=>{
 document.getElementById("savePropertyNotes").onclick=()=>{
   allPropertyNotes[propertyId]=document.getElementById("propertyNotes").value.trim();
   localStorage.setItem("bambooPropNotes",JSON.stringify(allPropertyNotes));
-  document.getElementById("propertyNotesSaved").textContent=allPropertyNotes[propertyId]?"Saved":"";
 };
 
 let calendarDate=new Date();
