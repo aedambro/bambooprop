@@ -72,11 +72,57 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 @media(max-width:780px){.section-heading{align-items:flex-start;flex-direction:column}.property-controls{width:100%;margin-left:0}.property-controls select{flex:1;min-width:0}}
 @media(max-width:430px){.property-controls{flex-direction:row}.property-controls select{width:auto;flex:1;min-width:0}}
 
+.property-dashboard{display:flex;align-items:center;gap:18px;margin-bottom:30px;overflow-x:auto;padding:2px 2px 6px}
+.dashboard-gauge{position:relative;flex:0 0 78px;width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(#111 0deg,#111 250deg,rgba(0,0,0,.08) 250deg,rgba(0,0,0,.08) 360deg);box-shadow:0 10px 25px rgba(0,0,0,.06)}
+.dashboard-gauge:before{content:"";position:absolute;inset:6px;border-radius:50%;background:rgba(247,247,245,.94);box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}
+.dashboard-gauge-content{position:relative;z-index:1;text-align:center;line-height:1}
+.dashboard-gauge-number{font-size:19px;font-weight:650;letter-spacing:-.05em}
+.dashboard-gauge-label{margin-top:5px;font-size:7px;color:#777;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.dashboard-gauge.viewing{background:conic-gradient(#f11 0deg,#f11 250deg,rgba(229,57,53,.12) 250deg,rgba(229,57,53,.12) 360deg)}
+.dashboard-gauge.booked{background:conic-gradient(#ff8500 0deg,#ff8500 250deg,rgba(255,133,0,.12) 250deg,rgba(255,133,0,.12) 360deg)}
+.dashboard-gauge.sold{background:conic-gradient(#18b84b 0deg,#18b84b 250deg,rgba(24,184,75,.12) 250deg,rgba(24,184,75,.12) 360deg)}
+.dashboard-gauge.tenanted{background:conic-gradient(#18b84b 0deg,#18b84b 250deg,rgba(24,184,75,.12) 250deg,rgba(24,184,75,.12) 360deg)}
+.dashboard-gauge.total{background:conic-gradient(#111 0deg,#111 250deg,rgba(0,0,0,.08) 250deg,rgba(0,0,0,.08) 360deg)}
+@media(max-width:680px){.property-dashboard{gap:12px;margin-bottom:24px}.dashboard-gauge{flex-basis:68px;width:68px;height:68px}.dashboard-gauge-number{font-size:17px}.dashboard-gauge-label{font-size:6px}}
 </style>
 </head>
 <body>
 <header class="site-header"><div class="brand">Bamboo Prop</div><div class="header-note">Property workspace</div></header>
 <main>
+
+<div class="property-dashboard" aria-label="Property dashboard">
+  <div class="dashboard-gauge viewing">
+    <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-number" id="dashboardUpcoming">0</div>
+      <div class="dashboard-gauge-label">Upcoming Viewing</div>
+    </div>
+  </div>
+  <div class="dashboard-gauge booked">
+    <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-number" id="dashboardBooked">0</div>
+      <div class="dashboard-gauge-label">Booked</div>
+    </div>
+  </div>
+  <div class="dashboard-gauge sold">
+    <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-number" id="dashboardSold">0</div>
+      <div class="dashboard-gauge-label">Sold</div>
+    </div>
+  </div>
+  <div class="dashboard-gauge tenanted">
+    <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-number" id="dashboardTenanted">0</div>
+      <div class="dashboard-gauge-label">Tenanted</div>
+    </div>
+  </div>
+  <div class="dashboard-gauge total">
+    <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-number" id="dashboardTotal">0</div>
+      <div class="dashboard-gauge-label">Total Properties</div>
+    </div>
+  </div>
+</div>
+
 <div class="section-heading">
   <div class="heading-left"><h1>My Properties</h1><span class="count" id="propertyCount">250 listings · 50 rows</span></div>
   <div class="property-controls">
@@ -196,6 +242,19 @@ if(days===0)return "Viewing today!";
 if(days===1)return "Viewing tomorrow";
 return "Viewing in "+days+" days";
 }
+function updatePropertyDashboard(){
+const propertyIds=Object.keys(propertyState).filter(id=>!deletedState[id]&&propertyState[id]);
+const upcomingCount=propertyIds.filter(id=>Number.isFinite(viewingTimestamp(id))).length;
+const bookedCount=propertyIds.filter(id=>propertyState[id]?.status==="booked").length;
+const soldCount=propertyIds.filter(id=>propertyState[id]?.status==="sold").length;
+const tenantedCount=propertyIds.filter(id=>propertyState[id]?.status==="tenanted").length;
+const totalCount=propertyIds.length;
+document.getElementById("dashboardUpcoming").textContent=upcomingCount;
+document.getElementById("dashboardBooked").textContent=bookedCount;
+document.getElementById("dashboardSold").textContent=soldCount;
+document.getElementById("dashboardTenanted").textContent=tenantedCount;
+document.getElementById("dashboardTotal").textContent=totalCount;
+}
 function applyPropertyControls(){
 const filter=document.getElementById("locationFilter")?.value || "all";
 const sort=document.getElementById("sortProperties")?.value || "default";
@@ -228,6 +287,7 @@ if(count){
 const filledCount=Object.keys(propertyState).filter(id=>!deletedState[id]).length;
 count.textContent=(TOTAL_PROPERTIES-filledCount)+" property spaces left";
 }
+updatePropertyDashboard();
 }
 
 function makeCard(index) {
