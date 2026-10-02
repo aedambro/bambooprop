@@ -349,6 +349,7 @@ document.getElementById("saveViewing").onclick=()=>{
 
 contacts.forEach((c,i)=>{if(!c.id)c.id=c.phone||String(i)});
 saveContacts();
+selectedDate=dateKey(new Date());
 renderContacts();
 renderCalendar();
 renderViewings();
