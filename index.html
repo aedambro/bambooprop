@@ -192,8 +192,7 @@ function applyPropertyControls(){
     if(sort==="favourites")return Number(!!favoriteState[bi])-Number(!!favoriteState[ai]);
     if(sort==="sold")return Number(propertyState[bi]?.status==="sold")-Number(propertyState[ai]?.status==="sold");
     if(sort==="tenanted")return Number(propertyState[bi]?.status==="tenanted")-Number(propertyState[ai]?.status==="tenanted");
-    if(sort==="viewing-soon")return viewingTimestamp(ai)-viewingTimestamp(bi);
-    return viewingTimestamp(ai)-viewingTimestamp(bi) || Number(ai)-Number(bi);
+    return Number(ai)-Number(bi);
   });
   visibleCards.forEach(card=>grid.appendChild(card));
   const count=document.getElementById("propertyCount");
@@ -320,16 +319,6 @@ function setProperty(card,data){
     status.className="property-status";
     status.textContent=data.status==="sold"?"Sold":"Tenanted";
     card.appendChild(status);
-  }else{
-    const viewing=viewingLabel(card.dataset.propertyId);
-    const existingViewing=card.querySelector(".property-viewing");
-    if(existingViewing)existingViewing.remove();
-    if(viewing){
-      const badge=document.createElement("div");
-      badge.className="property-viewing";
-      badge.textContent=viewing;
-      card.appendChild(badge);
-    }
   }
   card.querySelector("h2").textContent=data.name||"Property "+String(card.dataset.propertyId).padStart(3,"0");
   const amount=card.querySelector(".property-amount");
