@@ -44,6 +44,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 
 .property-card.status-sold,.property-card.status-tenanted{background:rgba(220,248,226,.72)}
 .property-status{position:absolute;top:11px;right:11px;z-index:10;padding:6px 9px;border:1px solid rgba(50,190,90,.22);border-radius:999px;background:rgba(255,255,255,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#18b84b;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.property-status-booked{border-color:rgba(255,145,0,.28);color:#ff8500}
 .property-viewing{position:absolute;top:11px;right:11px;z-index:10;padding:6px 9px;border:1px solid rgba(229,57,53,.22);border-radius:999px;background:rgba(255,255,255,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f11;font-size:9px;font-weight:700;letter-spacing:.02em}
 
 .empty-preview{display:flex;align-items:center;justify-content:center}
@@ -127,6 +128,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
       <option value="favourites">Favourites First</option>
       <option value="sold">Sold</option>
       <option value="tenanted">Tenanted</option>
+      <option value="booked">Booked</option>
       <option value="viewing-soon">Viewing Soon</option>
     </select>
   </div>
@@ -216,6 +218,7 @@ if(sort==="location")return propertyLocation(ai).localeCompare(propertyLocation(
 if(sort==="favourites")return Number(!!favoriteState[bi])-Number(!!favoriteState[ai]);
 if(sort==="sold")return Number(propertyState[bi]?.status==="sold")-Number(propertyState[ai]?.status==="sold");
 if(sort==="tenanted")return Number(propertyState[bi]?.status==="tenanted")-Number(propertyState[ai]?.status==="tenanted");
+if(sort==="booked")return Number(propertyState[bi]?.status==="booked")-Number(propertyState[ai]?.status==="booked");
 if(sort==="viewing-soon")return viewingTimestamp(ai)-viewingTimestamp(bi)||Number(ai)-Number(bi);
 return viewingTimestamp(ai)-viewingTimestamp(bi)||Number(ai)-Number(bi);
 });
@@ -313,16 +316,16 @@ card.classList.toggle("status-sold",data.status==="sold");
 card.classList.toggle("status-tenanted",data.status==="tenanted");
 const existingStatus=card.querySelector(".property-status");
 if(existingStatus)existingStatus.remove();
-if(data.status==="sold"||data.status==="tenanted"){
+if(data.status==="sold"||data.status==="tenanted"||data.status==="booked"){
 const status=document.createElement("div");
-status.className="property-status";
-status.textContent=data.status==="sold"?"Sold":"Tenanted";
+status.className="property-status"+(data.status==="booked"?" property-status-booked":"");
+status.textContent=data.status==="sold"?"Sold":data.status==="tenanted"?"Tenanted":"Booked";
 card.appendChild(status);
 }
 const viewing=viewingLabel(card.dataset.propertyId);
 const existingViewing=card.querySelector(".property-viewing");
 if(existingViewing)existingViewing.remove();
-if(viewing){
+if(!data.status&&viewing){
 const badge=document.createElement("div");
 badge.className="property-viewing";
 badge.textContent=viewing;
