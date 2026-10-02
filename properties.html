@@ -110,9 +110,21 @@ main{max-width:1120px;margin:0 auto;padding:42px 34px 80px}
     </div>
   </div>
 
-  <div class="panel">
-    <div class="section-title"><h2>Contacts</h2><button class="add-contact" id="addContact" type="button">Add Contact</button></div>
-    <div class="contacts" id="contacts"></div>
+  <div>
+    <div class="panel">
+      <div class="section-title"><h2>Contacts</h2><button class="add-contact" id="addContact" type="button">Add Contact</button></div>
+      <div class="contacts" id="contacts"></div>
+    </div>
+
+    <div class="panel" style="margin-top:18px">
+      <div class="section-title"><h2>Owner Contact</h2><button class="add-contact" id="addOwnerContact" type="button">Add Contact</button></div>
+      <div class="contacts" id="ownerContacts"></div>
+    </div>
+
+    <div class="panel" style="margin-top:18px">
+      <div class="section-title"><h2>Important Contacts</h2><button class="add-contact" id="addImportantContact" type="button">Add Contact</button></div>
+      <div class="contacts" id="importantContacts"></div>
+    </div>
   </div>
 </div>
 </main>
@@ -128,6 +140,16 @@ main{max-width:1120px;margin:0 auto;padding:42px 34px 80px}
   </div>
 </div>
 
+<div class="modal-backdrop" id="importantContactModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="closeImportantContact" type="button">×</button>
+    <h2>Add important contact</h2>
+    <p class="modal-subtitle">Enter a title for this contact.</p>
+    <input id="importantContactTitle" type="text" placeholder="Contact title">
+    <button class="confirm" id="saveImportantContact" type="button">Add Contact</button>
+  </div>
+</div>
+
 <script>
 const params=new URLSearchParams(location.search);
 const propertyId=params.get("id")||"1";
@@ -135,6 +157,10 @@ const properties=JSON.parse(localStorage.getItem("bambooPropProperties")||"{}");
 const property=properties[propertyId]||{title:"Property "+String(propertyId).padStart(3,"0"),location:"Location",price:"RM —"};
 const allContacts=JSON.parse(localStorage.getItem("bambooPropContacts")||"{}");
 const contacts=allContacts[propertyId]||[];
+const allOwnerContacts=JSON.parse(localStorage.getItem("bambooPropOwnerContacts")||"{}");
+const ownerContacts=allOwnerContacts[propertyId]||[];
+const allImportantContacts=JSON.parse(localStorage.getItem("bambooPropImportantContacts")||"{}");
+const importantContacts=allImportantContacts[propertyId]||[];
 const allViewings=JSON.parse(localStorage.getItem("bambooPropViewings")||"{}");
 const viewings=allViewings[propertyId]||[];
 const allPropertyNotes=JSON.parse(localStorage.getItem("bambooPropNotes")||"{}");
@@ -178,6 +204,12 @@ document.getElementById("deleteProperty").onclick=()=>{
   const contactsStore=JSON.parse(localStorage.getItem("bambooPropContacts")||"{}");
   delete contactsStore[propertyId];
   localStorage.setItem("bambooPropContacts",JSON.stringify(contactsStore));
+  const ownerContactsStore=JSON.parse(localStorage.getItem("bambooPropOwnerContacts")||"{}");
+  delete ownerContactsStore[propertyId];
+  localStorage.setItem("bambooPropOwnerContacts",JSON.stringify(ownerContactsStore));
+  const importantContactsStore=JSON.parse(localStorage.getItem("bambooPropImportantContacts")||"{}");
+  delete importantContactsStore[propertyId];
+  localStorage.setItem("bambooPropImportantContacts",JSON.stringify(importantContactsStore));
   const viewingsStore=JSON.parse(localStorage.getItem("bambooPropViewings")||"{}");
   delete viewingsStore[propertyId];
   localStorage.setItem("bambooPropViewings",JSON.stringify(viewingsStore));
@@ -200,6 +232,14 @@ if(property.image){
 function saveContacts(){
   allContacts[propertyId]=contacts;
   localStorage.setItem("bambooPropContacts",JSON.stringify(allContacts));
+}
+function saveOwnerContacts(){
+  allOwnerContacts[propertyId]=ownerContacts;
+  localStorage.setItem("bambooPropOwnerContacts",JSON.stringify(allOwnerContacts));
+}
+function saveImportantContacts(){
+  allImportantContacts[propertyId]=importantContacts;
+  localStorage.setItem("bambooPropImportantContacts",JSON.stringify(allImportantContacts));
 }
 function saveViewings(){
   allViewings[propertyId]=viewings;
@@ -244,6 +284,62 @@ function renderContacts(){
   });
   populateViewingContacts();
 }
+function renderOwnerContacts(){
+  const box=document.getElementById("ownerContacts");
+  if(!ownerContacts.length){
+    box.innerHTML='<div style="font-size:11px;color:#888;padding:12px 2px">No owner contact added yet.</div>';
+    return;
+  }
+  box.innerHTML="";
+  ownerContacts.forEach((contact,index)=>{
+    const card=document.createElement("div");
+    card.className="contact-card";
+    card.innerHTML=`
+      <div class="contact-top">
+        <div><div class="contact-name"></div><div class="contact-phone"></div></div>
+        <button class="whatsapp-btn" type="button">WhatsApp</button>
+      </div>
+      <div class="note-row"><input class="note-input" placeholder="Add a note" value="${String(contact.note||"").replace(/"/g,"&quot;")}"><button class="save-note" type="button">Save</button></div>`;
+    card.querySelector(".contact-name").textContent=contact.name||"Contact";
+    card.querySelector(".contact-phone").textContent=contact.phone||"";
+    card.querySelector(".whatsapp-btn").onclick=()=>whatsapp(contact.phone);
+    card.querySelector(".save-note").onclick=()=>{
+      ownerContacts[index].note=card.querySelector(".note-input").value.trim();
+      saveOwnerContacts();
+      renderOwnerContacts();
+    };
+    box.appendChild(card);
+  });
+}
+function renderImportantContacts(){
+  const box=document.getElementById("importantContacts");
+  if(!importantContacts.length){
+    box.innerHTML='<div style="font-size:11px;color:#888;padding:12px 2px">No important contacts added yet.</div>';
+    return;
+  }
+  box.innerHTML="";
+  importantContacts.forEach((contact,index)=>{
+    const card=document.createElement("div");
+    card.className="contact-card";
+    card.innerHTML=`
+      <div style="font-size:10px;color:#777;margin-bottom:5px"></div>
+      <div class="contact-top">
+        <div><div class="contact-name"></div><div class="contact-phone"></div></div>
+        <button class="whatsapp-btn" type="button">WhatsApp</button>
+      </div>
+      <div class="note-row"><input class="note-input" placeholder="Add a note" value="${String(contact.note||"").replace(/"/g,"&quot;")}"><button class="save-note" type="button">Save</button></div>`;
+    card.querySelector("div").textContent=contact.title||"";
+    card.querySelector(".contact-name").textContent=contact.name||"Contact";
+    card.querySelector(".contact-phone").textContent=contact.phone||"";
+    card.querySelector(".whatsapp-btn").onclick=()=>whatsapp(contact.phone);
+    card.querySelector(".save-note").onclick=()=>{
+      importantContacts[index].note=card.querySelector(".note-input").value.trim();
+      saveImportantContacts();
+      renderImportantContacts();
+    };
+    box.appendChild(card);
+  });
+}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 
 document.getElementById("addContact").onclick=async()=>{
@@ -263,6 +359,62 @@ document.getElementById("addContact").onclick=async()=>{
     saveContacts();
     renderContacts();
   }catch(error){}
+};
+
+document.getElementById("addOwnerContact").onclick=async()=>{
+  if(!("contacts" in navigator)){
+    alert("Contact selection is not supported by this browser. Please open Bamboo Prop on a supported mobile browser.");
+    return;
+  }
+  try{
+    const selected=await navigator.contacts.select(["name","tel"],{multiple:true});
+    selected.forEach(c=>{
+      const name=(c.name&&c.name[0])||"Contact";
+      const phone=(c.tel&&c.tel[0])||"";
+      if(phone && !ownerContacts.some(x=>x.phone===phone)){
+        ownerContacts.push({name,phone,note:""});
+      }
+    });
+    saveOwnerContacts();
+    renderOwnerContacts();
+  }catch(error){}
+};
+
+document.getElementById("addImportantContact").onclick=async()=>{
+  if(!("contacts" in navigator)){
+    alert("Contact selection is not supported by this browser. Please open Bamboo Prop on a supported mobile browser.");
+    return;
+  }
+  try{
+    const selected=await navigator.contacts.select(["name","tel"],{multiple:true});
+    if(!selected.length)return;
+    selected.forEach(c=>{
+      const name=(c.name&&c.name[0])||"Contact";
+      const phone=(c.tel&&c.tel[0])||"";
+      if(phone && !importantContacts.some(x=>x.phone===phone)){
+        importantContacts.push({title:"",name,phone,note:""});
+      }
+    });
+    const lastContact=importantContacts[importantContacts.length-1];
+    if(lastContact){
+      document.getElementById("importantContactTitle").value="";
+      document.getElementById("importantContactModal").classList.add("open");
+      document.getElementById("importantContactModal").dataset.index=String(importantContacts.length-1);
+    }
+    saveImportantContacts();
+    renderImportantContacts();
+  }catch(error){}
+};
+
+document.getElementById("closeImportantContact").onclick=()=>document.getElementById("importantContactModal").classList.remove("open");
+document.getElementById("importantContactModal").onclick=e=>{if(e.target.id==="importantContactModal")e.currentTarget.classList.remove("open")};
+document.getElementById("saveImportantContact").onclick=()=>{
+  const index=parseInt(document.getElementById("importantContactModal").dataset.index,10);
+  if(!importantContacts[index])return;
+  importantContacts[index].title=document.getElementById("importantContactTitle").value.trim();
+  saveImportantContacts();
+  document.getElementById("importantContactModal").classList.remove("open");
+  renderImportantContacts();
 };
 
 document.getElementById("savePropertyNotes").onclick=()=>{
@@ -348,9 +500,15 @@ document.getElementById("saveViewing").onclick=()=>{
 };
 
 contacts.forEach((c,i)=>{if(!c.id)c.id=c.phone||String(i)});
+ownerContacts.forEach((c,i)=>{if(!c.id)c.id=c.phone||String(i)});
+importantContacts.forEach((c,i)=>{if(!c.id)c.id=c.phone||String(i)});
 saveContacts();
+saveOwnerContacts();
+saveImportantContacts();
 selectedDate=dateKey(new Date());
 renderContacts();
+renderOwnerContacts();
+renderImportantContacts();
 renderCalendar();
 renderViewings();
 </script>
