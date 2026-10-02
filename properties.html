@@ -39,6 +39,12 @@ main{max-width:1120px;margin:0 auto;padding:42px 34px 80px}
 .note-row{display:flex;gap:7px;margin-top:10px}
 .note-input{flex:1;min-width:0;height:35px;border:1px solid rgba(0,0,0,.09);border-radius:10px;background:rgba(255,255,255,.68);padding:0 10px;font:inherit;font-size:10px;outline:none}
 .saved-note{font-size:10px;color:#777;margin-top:7px;line-height:1.4}
+.property-notes{margin-top:18px}
+.property-notes-input{width:100%;min-height:90px;border:1px solid rgba(0,0,0,.09);border-radius:12px;background:rgba(255,255,255,.68);padding:10px;font:inherit;font-size:10px;outline:none;resize:vertical}
+.property-notes-input:focus{border-color:rgba(0,0,0,.16)}
+.property-notes-save{margin-top:9px;border:0;border-radius:999px;background:#111;color:#fff;padding:9px 13px;font:inherit;font-size:10px;font-weight:600;cursor:pointer}
+.property-notes-save:hover{opacity:.86}
+.property-notes-saved{font-size:10px;color:#777;margin-top:7px;line-height:1.4}
 .calendar-panel{margin-top:18px}
 .calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
 .calendar-month{font-size:14px;font-weight:600}
@@ -86,6 +92,13 @@ main{max-width:1120px;margin:0 auto;padding:42px 34px 80px}
   <div>
     <div class="panel preview" id="propertyPreview"></div>
 
+    <div class="panel property-notes">
+      <div class="section-title"><h2>Notes</h2></div>
+      <textarea class="property-notes-input" id="propertyNotes" placeholder="Add a note"></textarea>
+      <button class="property-notes-save" id="savePropertyNotes" type="button">Save</button>
+      <div class="property-notes-saved" id="propertyNotesSaved"></div>
+    </div>
+
     <div class="panel calendar-panel">
       <div class="section-title"><h2>Viewings</h2><button class="add-viewing" id="addViewing" type="button">Add Viewing</button></div>
       <div class="calendar-head">
@@ -125,10 +138,13 @@ const allContacts=JSON.parse(localStorage.getItem("bambooPropContacts")||"{}");
 const contacts=allContacts[propertyId]||[];
 const allViewings=JSON.parse(localStorage.getItem("bambooPropViewings")||"{}");
 const viewings=allViewings[propertyId]||[];
+const allPropertyNotes=JSON.parse(localStorage.getItem("bambooPropNotes")||"{}");
 
 document.getElementById("propertyTitle").textContent=property.name||"Property";
 document.getElementById("propertyLocation").textContent=property.location||"Location";
 document.getElementById("propertyPrice").textContent=property.price||"RM —";
+document.getElementById("propertyNotes").value=allPropertyNotes[propertyId]||"";
+document.getElementById("propertyNotesSaved").textContent=allPropertyNotes[propertyId]?"Saved":"";
 
 function savePropertyStatus(status){
   if(!properties[propertyId])return;
@@ -250,6 +266,12 @@ document.getElementById("addContact").onclick=async()=>{
     saveContacts();
     renderContacts();
   }catch(error){}
+};
+
+document.getElementById("savePropertyNotes").onclick=()=>{
+  allPropertyNotes[propertyId]=document.getElementById("propertyNotes").value.trim();
+  localStorage.setItem("bambooPropNotes",JSON.stringify(allPropertyNotes));
+  document.getElementById("propertyNotesSaved").textContent=allPropertyNotes[propertyId]?"Saved":"";
 };
 
 let calendarDate=new Date();
