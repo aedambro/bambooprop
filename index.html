@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -47,7 +48,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 
 .empty-preview{display:flex;align-items:center;justify-content:center}
 .add-property-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.68);color:#171719;border-radius:999px;padding:9px 13px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s ease}
-.add-property-btn:hover{background:#111;color:white;transform:translateY(-1px)}
+.add-property-btn:hover
 .add-property-btn .plus{font-size:17px;font-weight:400;line-height:10px}
 .empty-location{opacity:.48}.copy-btn:disabled{opacity:.45;cursor:default}
 .property-preview-link{display:block;position:relative;width:100%;height:100%}.property-preview-link img{display:block;width:100%;height:100%;object-fit:cover}
@@ -58,7 +59,6 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 .modal-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#888;margin-bottom:7px}.modal h2{margin:0;font-size:25px;letter-spacing:-.045em}.modal-subtitle{font-size:12px;color:#777;margin:7px 0 18px}
 .modal input{width:100%;height:46px;border:1px solid rgba(0,0,0,.12);border-radius:13px;background:rgba(255,255,255,.72);padding:0 14px;font:inherit;font-size:12px;outline:none}.modal input:focus{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
 .modal-status{height:23px;padding-top:7px;font-size:11px;color:#777}.confirm-btn{width:100%;margin-top:8px;border:0;border-radius:13px;background:#111;color:white;height:45px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
-
 
 .property-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .property-title-row h2{margin:0!important}
@@ -141,120 +141,121 @@ let activeCard = null;
 const propertyState = JSON.parse(localStorage.getItem("bambooPropProperties") || "{}");
 const favoriteState = JSON.parse(localStorage.getItem("bambooPropFavorites") || "{}");
 const deletedState = JSON.parse(localStorage.getItem("bambooPropDeleted") || "{}");
+const allViewings = JSON.parse(localStorage.getItem("bambooPropViewings") || "{}");
 
 function savePropertyState(){
-  localStorage.setItem("bambooPropProperties",JSON.stringify(propertyState));
+localStorage.setItem("bambooPropProperties",JSON.stringify(propertyState));
 }
 function saveFavoriteState(){
-  localStorage.setItem("bambooPropFavorites",JSON.stringify(favoriteState));
+localStorage.setItem("bambooPropFavorites",JSON.stringify(favoriteState));
 }
 function restoreFavorite(index,card){
-  const button=card.querySelector(".favorite-btn");
-  const active=!!favoriteState[String(index)];
-  button.classList.toggle("active",active);
-  button.textContent=active?"♥":"♡";
+const button=card.querySelector(".favorite-btn");
+const active=!!favoriteState[String(index)];
+button.classList.toggle("active",active);
+button.textContent=active?"♥":"♡";
 }
 function toggleFavorite(index,card){
-  const key=String(index);
-  favoriteState[key]=!favoriteState[key];
-  if(!favoriteState[key])delete favoriteState[key];
-  saveFavoriteState();
-  restoreFavorite(index,card);
-  applyPropertyControls();
+const key=String(index);
+favoriteState[key]=!favoriteState[key];
+if(!favoriteState[key])delete favoriteState[key];
+saveFavoriteState();
+restoreFavorite(index,card);
+applyPropertyControls();
 }
 function propertyPrice(id){
-  const value=propertyState[String(id)]?.title || "";
-  const number=parseFloat(String(value).replace(/[^0-9.]/g,""));
-  return Number.isFinite(number)?number:-1;
+const value=propertyState[String(id)]?.title || "";
+const number=parseFloat(String(value).replace(/[^0-9.]/g,""));
+return Number.isFinite(number)?number:-1;
 }
 function propertyLocation(id){
-  return String(propertyState[String(id)]?.location || "").toLowerCase();
+return String(propertyState[String(id)]?.location || "").toLowerCase();
+}
+function viewingTimestamp(id){
+const viewings=Array.isArray(allViewings[String(id)])?allViewings[String(id)]:[];
+const now=Date.now();
+const times=viewings.map(v=>{
+if(!v||!v.date||!v.time)return Infinity;
+const time=new Date(String(v.date)+"T"+String(v.time)).getTime();
+return Number.isFinite(time)&&time>=now?time:Infinity;
+});
+return times.length?Math.min(...times):Infinity;
+}
+function viewingLabel(id){
+const timestamp=viewingTimestamp(id);
+if(!Number.isFinite(timestamp))return "";
+const viewingDate=new Date(timestamp);
+const today=new Date();
+today.setHours(0,0,0,0);
+const target=new Date(viewingDate);
+target.setHours(0,0,0,0);
+const days=Math.round((target-today)/86400000);
+if(days===0)return "Viewing today!";
+if(days===1)return "Viewing tomorrow";
+return "Viewing in "+days+" days";
 }
 function applyPropertyControls(){
-  const filter=document.getElementById("locationFilter")?.value || "all";
-  const sort=document.getElementById("sortProperties")?.value || "default";
-  const cards=[...grid.children];
-  cards.forEach(card=>{
-    const id=card.dataset.propertyId;
-    const location=propertyLocation(id);
-    const isFav=!!favoriteState[id];
-    let visible=!deletedState[id];
-    if(visible&&filter==="favourites") visible=isFav;
-    else if(filter!=="all") visible=location.includes(String(filter).toLowerCase());
-    card.style.display=visible?"":"none";
-  });
-  const visibleCards=cards.filter(card=>card.style.display!=="none");
-  visibleCards.sort((a,b)=>{
-    const ai=a.dataset.propertyId, bi=b.dataset.propertyId;
-    if(sort==="price-high")return propertyPrice(bi)-propertyPrice(ai);
-    if(sort==="price-low")return propertyPrice(ai)-propertyPrice(bi);
-    if(sort==="location")return propertyLocation(ai).localeCompare(propertyLocation(bi));
-    if(sort==="favourites")return Number(!!favoriteState[bi])-Number(!!favoriteState[ai]);
-    if(sort==="sold")return Number(propertyState[bi]?.status==="sold")-Number(propertyState[ai]?.status==="sold");
-    if(sort==="tenanted")return Number(propertyState[bi]?.status==="tenanted")-Number(propertyState[ai]?.status==="tenanted");
-    return Number(ai)-Number(bi);
-  });
-  visibleCards.forEach(card=>grid.appendChild(card));
-  const count=document.getElementById("propertyCount");
-  if(count){
-    const filledCount=Object.keys(propertyState).filter(id=>!deletedState[id]).length;
-    count.textContent=(TOTAL_PROPERTIES-filledCount)+" property spaces left";
-  }
+const filter=document.getElementById("locationFilter")?.value || "all";
+const sort=document.getElementById("sortProperties")?.value || "default";
+const cards=[...grid.children];
+cards.forEach(card=>{
+const id=card.dataset.propertyId;
+const location=propertyLocation(id);
+const isFav=!!favoriteState[id];
+let visible=!deletedState[id];
+if(visible&&filter==="favourites") visible=isFav;
+else if(filter!=="all") visible=location.includes(String(filter).toLowerCase());
+card.style.display=visible?"":"none";
+});
+const visibleCards=cards.filter(card=>card.style.display!=="none");
+visibleCards.sort((a,b)=>{
+const ai=a.dataset.propertyId, bi=b.dataset.propertyId;
+if(sort==="price-high")return propertyPrice(bi)-propertyPrice(ai);
+if(sort==="price-low")return propertyPrice(ai)-propertyPrice(bi);
+if(sort==="location")return propertyLocation(ai).localeCompare(propertyLocation(bi));
+if(sort==="favourites")return Number(!!favoriteState[bi])-Number(!!favoriteState[ai]);
+if(sort==="sold")return Number(propertyState[bi]?.status==="sold")-Number(propertyState[ai]?.status==="sold");
+if(sort==="tenanted")return Number(propertyState[bi]?.status==="tenanted")-Number(propertyState[ai]?.status==="tenanted");
+if(sort==="viewing-soon")return viewingTimestamp(ai)-viewingTimestamp(bi)||Number(ai)-Number(bi);
+return viewingTimestamp(ai)-viewingTimestamp(bi)||Number(ai)-Number(bi);
+});
+visibleCards.forEach(card=>grid.appendChild(card));
+const count=document.getElementById("propertyCount");
+if(count){
+const filledCount=Object.keys(propertyState).filter(id=>!deletedState[id]).length;
+count.textContent=(TOTAL_PROPERTIES-filledCount)+" property spaces left";
+}
 }
 
-
 function makeCard(index) {
-  const card = document.createElement("article");
-  card.className = "property-card";
-  card.dataset.propertyId = String(index);
-  card.innerHTML = `
-    <div class="preview-shell empty-preview">
-      <button class="add-property-btn" type="button"><span class="plus">+</span><span>Add Property</span></button>
-    </div>
-    <div class="property-info">
-      <div class="property-title-row">
-        <h2>Property ${String(index).padStart(3,"0")}</h2>
-        <button class="favorite-btn" type="button" aria-label="Favourite property" title="Favourite property">♡</button>
-      </div>
-      <div class="property-amount">RM —</div>
-      <div class="meta-row">
-        <span class="location empty-location">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>
-          <span>Location</span>
-        </span>
-        <button class="copy-btn" type="button" disabled>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 1 2 2"/></svg>
-          <span>Copy</span>
-        </button>
-        <a class="copy-btn visit-btn" href="#" target="_blank" rel="noopener" aria-label="Visit property">
-          <span>Visit</span>
-        </a>
-      </div>
-    </div>`;
-  card.querySelector(".add-property-btn").onclick = (e) => { e.stopPropagation(); openModal(card); };
-  card.querySelector(".favorite-btn").onclick = (e) => {
-    e.stopPropagation();
-    toggleFavorite(index, card);
-  };
-  card.onclick = (e) => {
-    if(e.target.closest("button") || e.target.closest("a")) return;
-    window.location.href = "properties.html?id=" + encodeURIComponent(index);
-  };
-  restoreFavorite(index, card);
-  return card;
+const card = document.createElement("article");
+card.className = "property-card";
+card.dataset.propertyId = String(index);
+card.innerHTML = `     <div class="preview-shell empty-preview">       <button class="add-property-btn" type="button"><span class="plus">+</span><span>Add Property</span></button>     </div>     <div class="property-info">       <div class="property-title-row">         <h2>Property ${String(index).padStart(3,"0")}</h2>         <button class="favorite-btn" type="button" aria-label="Favourite property" title="Favourite property">♡</button>       </div>       <div class="property-amount">RM —</div>       <div class="meta-row">         <span class="location empty-location">           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>           <span>Location</span>         </span>         <button class="copy-btn" type="button" disabled>           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2v8a2 2 0 0 1 2 2"/></svg>           <span>Copy</span>         </button>         <a class="copy-btn visit-btn" href="#" target="_blank" rel="noopener" aria-label="Visit property">           <span>Visit</span>         </a>       </div>     </div>`;
+card.querySelector(".add-property-btn").onclick = (e) => { e.stopPropagation(); openModal(card); };
+card.querySelector(".favorite-btn").onclick = (e) => {
+e.stopPropagation();
+toggleFavorite(index, card);
+};
+card.onclick = (e) => {
+if(e.target.closest("button") || e.target.closest("a")) return;
+window.location.href = "properties.html?id=" + encodeURIComponent(index);
+};
+restoreFavorite(index, card);
+return card;
 }
 
 const savedPropertyIds=Object.keys(propertyState)
-  .filter(id=>!deletedState[id]&&Number.isInteger(Number(id))&&Number(id)>=1&&Number(id)<=TOTAL_PROPERTIES)
-  .map(Number)
-  .sort((a,b)=>a-b);
+.filter(id=>!deletedState[id]&&Number.isInteger(Number(id))&&Number(id)>=1&&Number(id)<=TOTAL_PROPERTIES)
+.map(Number)
+.sort((a,b)=>a-b);
 if(!savedPropertyIds.length){
-  Object.keys(deletedState).forEach(id=>delete deletedState[id]);
-  localStorage.setItem("bambooPropDeleted",JSON.stringify(deletedState));
+Object.keys(deletedState).forEach(id=>delete deletedState[id]);
+localStorage.setItem("bambooPropDeleted",JSON.stringify(deletedState));
 }
 const nextPropertyId=savedPropertyIds.length?Math.max(...savedPropertyIds)+1:1;
 [...new Set([...savedPropertyIds,nextPropertyId].filter(id=>id<=TOTAL_PROPERTIES))]
-  .forEach(i=>grid.appendChild(makeCard(i)));
+.forEach(i=>grid.appendChild(makeCard(i)));
 document.getElementById("locationFilter").addEventListener("change",applyPropertyControls);
 document.getElementById("sortProperties").addEventListener("change",applyPropertyControls);
 applyPropertyControls();
@@ -264,6 +265,7 @@ restoreSavedProperties();
 const modal = document.createElement("div");
 modal.className = "modal-backdrop";
 modal.innerHTML = `
+
   <div class="modal" role="dialog" aria-modal="true">
     <button class="modal-close" type="button" aria-label="Close">×</button>
     <div class="modal-eyebrow">Bamboo Prop</div>
@@ -285,165 +287,168 @@ function closeModal(){modal.classList.remove("open");activeCard=null}
 modal.querySelector(".modal-close").onclick=closeModal;
 modal.onclick=e=>{if(e.target===modal)closeModal()};
 
-
 function restoreSavedProperties(){
-  Object.entries(propertyState).forEach(([id,data])=>{
-    const card=grid.querySelector('[data-property-id="'+CSS.escape(id)+'"]');
-    if(card && data && data.image) setProperty(card,data);
-  });
+Object.entries(propertyState).forEach(([id,data])=>{
+const card=grid.querySelector('[data-property-id="'+CSS.escape(id)+'"]');
+if(card && data && data.image) setProperty(card,data);
+});
 }
 
-function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">",'"':""","'":"'"}[c]))}
 
 function setProperty(card,data){
-  if(!data || !card)return;
-  const preview=card.querySelector(".preview-shell");
-  preview.classList.remove("empty-preview");
-  preview.innerHTML=`<a class="property-preview-link" href="properties.html?id=${encodeURIComponent(card.dataset.propertyId)}">
-    <img src="${data.image}" alt="${escapeHtml(data.title)}" referrerpolicy="no-referrer">
-    <div class="preview-overlay"><span>Open property ↗</span></div></a>`;
+if(!data || !card)return;
+const preview=card.querySelector(".preview-shell");
+preview.classList.remove("empty-preview");
+preview.innerHTML=`<a class="property-preview-link" href="properties.html?id=${encodeURIComponent(card.dataset.propertyId)}">     <img src="${data.image}" alt="${escapeHtml(data.title)}" referrerpolicy="no-referrer">     <div class="preview-overlay"><span>Open property ↗</span></div></a>`;
 
-  propertyState[card.dataset.propertyId]=data;
-  savePropertyState();
-  const nextId=Math.max(...Object.keys(propertyState).map(id=>Number(id)).filter(id=>Number.isFinite(id)),0)+1;
-  if(nextId<=TOTAL_PROPERTIES&&!grid.querySelector('[data-property-id="'+nextId+'"]')){
-    grid.appendChild(makeCard(nextId));
-  }
-  delete deletedState[card.dataset.propertyId];
-  card.classList.toggle("status-sold",data.status==="sold");
-  card.classList.toggle("status-tenanted",data.status==="tenanted");
-  const existingStatus=card.querySelector(".property-status");
-  if(existingStatus)existingStatus.remove();
-  if(data.status==="sold"||data.status==="tenanted"){
-    const status=document.createElement("div");
-    status.className="property-status";
-    status.textContent=data.status==="sold"?"Sold":"Tenanted";
-    card.appendChild(status);
-  }
-  card.querySelector("h2").textContent=data.name||"Property "+String(card.dataset.propertyId).padStart(3,"0");
-  const amount=card.querySelector(".property-amount");
-  if(amount)amount.textContent=data.price||data.title||"RM —";
-  const oldLocation=card.querySelector(".location");
-  oldLocation.outerHTML=`<a class="location" href="${data.map}" target="_blank" rel="noopener">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>
-    <span>${escapeHtml(data.location)}</span></a>`;
+propertyState[card.dataset.propertyId]=data;
+savePropertyState();
+const nextId=Math.max(...Object.keys(propertyState).map(id=>Number(id)).filter(id=>Number.isFinite(id)),0)+1;
+if(nextId<=TOTAL_PROPERTIES&&!grid.querySelector('[data-property-id="'+nextId+'"]')){
+grid.appendChild(makeCard(nextId));
+}
+delete deletedState[card.dataset.propertyId];
+card.classList.toggle("status-sold",data.status==="sold");
+card.classList.toggle("status-tenanted",data.status==="tenanted");
+const existingStatus=card.querySelector(".property-status");
+if(existingStatus)existingStatus.remove();
+if(data.status==="sold"||data.status==="tenanted"){
+const status=document.createElement("div");
+status.className="property-status";
+status.textContent=data.status==="sold"?"Sold":"Tenanted";
+card.appendChild(status);
+}
+const viewing=viewingLabel(card.dataset.propertyId);
+const existingViewing=card.querySelector(".property-viewing");
+if(existingViewing)existingViewing.remove();
+if(viewing){
+const badge=document.createElement("div");
+badge.className="property-viewing";
+badge.textContent=viewing;
+card.appendChild(badge);
+}
+card.querySelector("h2").textContent=data.name||"Property "+String(card.dataset.propertyId).padStart(3,"0");
+const amount=card.querySelector(".property-amount");
+if(amount)amount.textContent=data.price||data.title||"RM —";
+const oldLocation=card.querySelector(".location");
+oldLocation.outerHTML=`<a class="location" href="${data.map}" target="_blank" rel="noopener">     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>     <span>${escapeHtml(data.location)}</span></a>`;
 
-  const copy=card.querySelector(".copy-btn");
-  copy.disabled=false;
-  copy.dataset.copy=data.url;
-  copy.onclick=async()=>{
-    try{await navigator.clipboard.writeText(data.url)}catch{
-      const a=document.createElement("textarea");a.value=data.url;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();
-    }
-    const s=copy.querySelector("span");copy.classList.add("copied");s.textContent="Copied";
-    setTimeout(()=>{copy.classList.remove("copied");s.textContent="Copy"},1300);
-  };
+const copy=card.querySelector(".copy-btn");
+copy.disabled=false;
+copy.dataset.copy=data.url;
+copy.onclick=async()=>{
+try{await navigator.clipboard.writeText(data.url)}catch{
+const a=document.createElement("textarea");a.value=data.url;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();
+}
+const s=copy.querySelector("span");copy.classList.add("copied");s.textContent="Copied";
+setTimeout(()=>{copy.classList.remove("copied");s.textContent="Copy"},1300);
+};
 
-  const visit=card.querySelector(".visit-btn");
-  visit.href=data.url||"#";
-  applyPropertyControls();
+const visit=card.querySelector(".visit-btn");
+visit.href=data.url||"#";
+applyPropertyControls();
 }
 
-
 function chooseLocation(text){
-  const lines=text.split(/\r?\n/).map(v=>v.replace(/\s+/g," ").trim()).filter(v=>v.length>=3&&v.length<=120);
-  const states="Selangor|Kuala Lumpur|Johor|Penang|Pulau Pinang|Perak|Melaka|Negeri Sembilan|Pahang|Kedah|Kelantan|Terengganu|Perlis|Sabah|Sarawak|Putrajaya|Labuan";
-  const re=new RegExp(`([A-Za-z][A-Za-z .'-]{2,60}),\\s*(${states})\\b`,"i");
-  for(const line of lines){const m=line.match(re);if(m)return `${m[1].trim()}, ${m[2].trim()}`;}
-  const tagged=lines.find(line=>/(location|address|area|property location|located in|located at)/i.test(line));
-  if(tagged)return tagged.replace(/^(location|address|area|property location|located in|located at)\s*[:\-]?\s*/i,"").trim();
-  return "Location";
+const lines=text.split(/\r?\n/).map(v=>v.replace(/\s+/g," ").trim()).filter(v=>v.length>=3&&v.length<=120);
+const states="Selangor|Kuala Lumpur|Johor|Penang|Pulau Pinang|Perak|Melaka|Negeri Sembilan|Pahang|Kedah|Kelantan|Terengganu|Perlis|Sabah|Sarawak|Putrajaya|Labuan";
+const re=new RegExp(`([A-Za-z][A-Za-z .'-]{2,60}),\\s*(${states})\\b`,"i");
+for(const line of lines){const m=line.match(re);if(m)return `${m[1].trim()}, ${m[2].trim()}`;}
+const tagged=lines.find(line=>/(location|address|area|property location|located in|located at)/i.test(line));
+if(tagged)return tagged.replace(/^(location|address|area|property location|located in|located at)\s*[:-]?\s*/i,"").trim();
+return "Location";
 }
 
 function chooseTitle(text){
-  const normalized=String(text||"").replace(/\u00a0/g," ");
-  const matches=normalized.match(/RM\s*\d[\d,]*(?:\.\d{1,2})?/gi)||[];
+const normalized=String(text||"").replace(/\u00a0/g," ");
+const matches=normalized.match(/RM\s*\d[\d,]*(?:.\d{1,2})?/gi)||[];
 
-  if(matches.length){
-    const parsed=matches.map(value=>({
-      text:value.replace(/\s+/g," ").trim(),
-      number:parseFloat(value.replace(/RM\s*/i,"").replace(/,/g,""))
-    })).filter(value=>Number.isFinite(value.number));
-    if(parsed.length){
-      parsed.sort((a,b)=>b.number-a.number);
-      return parsed[0].text;
-    }
-  }
+if(matches.length){
+const parsed=matches.map(value=>({
+text:value.replace(/\s+/g," ").trim(),
+number:parseFloat(value.replace(/RM\s*/i,"").replace(/,/g,""))
+})).filter(value=>Number.isFinite(value.number));
+if(parsed.length){
+parsed.sort((a,b)=>b.number-a.number);
+return parsed[0].text;
+}
+}
 
-  return "RM —";
+return "RM —";
 }
 
 async function extractTitleFromScreenshot(file){
-  if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please check your internet connection.");
-  const worker=await Tesseract.createWorker("eng");
-  try{
-    const result=await worker.recognize(file);
-    return chooseTitle(result.data.text || "");
-  }finally{
-    await worker.terminate();
-  }
+if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please check your internet connection.");
+const worker=await Tesseract.createWorker("eng");
+try{
+const result=await worker.recognize(file);
+return chooseTitle(result.data.text || "");
+}finally{
+await worker.terminate();
+}
 }
 
 document.getElementById("confirmProperty").onclick=async()=>{
-  if(!activeCard)return;
-  const file=screenshotInput.files&&screenshotInput.files[0];
-  const propertyLink=document.getElementById("propertyLink").value.trim();
-  if(!file||!file.type.startsWith("image/")){status.textContent="Please select a property screenshot.";return}
-  const propertyTitle=document.getElementById("propertyTitle").value.trim();
-  if(!propertyTitle){status.textContent="Please enter a property title.";return}
-  if(propertyLink&&!/^https?:\/\//i.test(propertyLink)){status.textContent="Please enter a valid property link.";return}
-  status.textContent="Reading screenshot…";
-  try{
-    const image=await new Promise((resolve,reject)=>{
-      const reader=new FileReader();
-      reader.onload=()=>{
-        const img=new Image();
-        img.onload=()=>{
-          const canvas=document.createElement("canvas");
-          const ctx=canvas.getContext("2d");
-          const cropHeight=Math.max(1,Math.floor(img.height*0.62));
-          canvas.width=img.width;
-          canvas.height=cropHeight;
-          ctx.drawImage(img,0,0,img.width,cropHeight,0,0,img.width,cropHeight);
-          resolve(canvas.toDataURL("image/jpeg",0.92));
-        };
-        img.onerror=()=>reject(new Error("Unable to process screenshot."));
-        img.src=reader.result;
-      };
-      reader.onerror=()=>reject(new Error("Unable to read screenshot."));
-      reader.readAsDataURL(file);
-    });
-    status.textContent="Extracting price and location…";
-    if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please check your internet connection.");
-    const worker=await Tesseract.createWorker("eng");
-    let text="";
-    try{text=(await worker.recognize(file)).data.text||""}finally{await worker.terminate()}
-    const title=propertyTitle;
-    const price=chooseTitle(text);
-    const location=chooseLocation(text);
-    const finalUrl=propertyLink||"#";
-    const map=location!=="Location"?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location):"#";
-    setProperty(activeCard,{url:finalUrl,name:title,title:price,price,location,map,image});
-    closeModal();
-  }catch(error){status.textContent=error.message||"Unable to process screenshot."}
+if(!activeCard)return;
+const file=screenshotInput.files&&screenshotInput.files[0];
+const propertyLink=document.getElementById("propertyLink").value.trim();
+if(!file||!file.type.startsWith("image/")){status.textContent="Please select a property screenshot.";return}
+const propertyTitle=document.getElementById("propertyTitle").value.trim();
+if(!propertyTitle){status.textContent="Please enter a property title.";return}
+if(propertyLink&&!/^https?:///i.test(propertyLink)){status.textContent="Please enter a valid property link.";return}
+status.textContent="Reading screenshot…";
+try{
+const image=await new Promise((resolve,reject)=>{
+const reader=new FileReader();
+reader.onload=()=>{
+const img=new Image();
+img.onload=()=>{
+const canvas=document.createElement("canvas");
+const ctx=canvas.getContext("2d");
+const cropHeight=Math.max(1,Math.floor(img.height*0.62));
+canvas.width=img.width;
+canvas.height=cropHeight;
+ctx.drawImage(img,0,0,img.width,cropHeight,0,0,img.width,cropHeight);
+resolve(canvas.toDataURL("image/jpeg",0.92));
+};
+img.onerror=()=>reject(new Error("Unable to process screenshot."));
+img.src=reader.result;
+};
+reader.onerror=()=>reject(new Error("Unable to read screenshot."));
+reader.readAsDataURL(file);
+});
+status.textContent="Extracting price and location…";
+if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please check your internet connection.");
+const worker=await Tesseract.createWorker("eng");
+let text="";
+try{text=(await worker.recognize(file)).data.text||""}finally{await worker.terminate()}
+const title=propertyTitle;
+const price=chooseTitle(text);
+const location=chooseLocation(text);
+const finalUrl=propertyLink||"#";
+const map=location!=="Location"?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location):"#";
+setProperty(activeCard,{url:finalUrl,name:title,title:price,price,location,map,image});
+closeModal();
+}catch(error){status.textContent=error.message||"Unable to process screenshot."}
 };
 document.addEventListener("paste",e=>{
-  if(!modal.classList.contains("open"))return;
-  const items=e.clipboardData?.items||[];
-  for(const item of items){
-    if(item.type.startsWith("image/")){
-      const file=item.getAsFile();
-      const transfer=new DataTransfer();
-      transfer.items.add(file);
-      screenshotInput.files=transfer.files;
-      status.textContent="Screenshot pasted. Click Confirm.";
-      e.preventDefault();
-      break;
-    }
-  }
+if(!modal.classList.contains("open"))return;
+const items=e.clipboardData?.items||[];
+for(const item of items){
+if(item.type.startsWith("image/")){
+const file=item.getAsFile();
+const transfer=new DataTransfer();
+transfer.items.add(file);
+screenshotInput.files=transfer.files;
+status.textContent="Screenshot pasted. Click Confirm.";
+e.preventDefault();
+break;
+}
+}
 });
 
-screenshotInput.addEventListener("change",()=>{if(screenshotInput.files?.length)status.textContent="Screenshot selected. Click Confirm."});
-</script>
+screenshotInput.addEventListener("change",()=>{if(screenshotInput.files?.length)status.textContent="Screenshot selected. Click Confirm."}); </script>
+
 </body>
 </html>
