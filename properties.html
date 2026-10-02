@@ -292,18 +292,18 @@ function renderCalendar(){
     const el=document.createElement("button");el.type="button";el.className="day";el.textContent=d;
     if(key===dateKey(new Date()))el.classList.add("today");
     if(viewings.some(v=>v.date===key))el.classList.add("has-viewing");
-    el.onclick=()=>openViewing(key);
+    el.onclick=()=>{
+      selectedDate=key;
+      renderViewings();
+    };
     grid.appendChild(el);
   }
 }
 function renderViewings(){
   const box=document.getElementById("viewings");
-  const sorted=[...viewings].sort((a,b)=>(a.date+" "+a.time).localeCompare(b.date+" "+b.time));
+  const sorted=[...viewings].filter(v=>v.date===selectedDate).sort((a,b)=>(a.date+" "+a.time).localeCompare(b.date+" "+b.time));
   box.innerHTML="";
-  if(!sorted.length){
-    box.innerHTML='<div style="font-size:10px;color:#888">No viewings scheduled.</div>';
-    return;
-  }
+  if(!selectedDate||!sorted.length)return;
   sorted.forEach(v=>{
     const person=contacts.find(c=>c.id===v.contactId)||contacts.find(c=>c.phone===v.phone);
     const el=document.createElement("div");el.className="viewing";
@@ -327,7 +327,10 @@ function openViewing(key){
   populateViewingContacts();
   document.getElementById("viewingModal").classList.add("open");
 }
-document.getElementById("addViewing").onclick=()=>openViewing(dateKey(calendarDate));
+document.getElementById("addViewing").onclick=()=>{
+  if(!selectedDate)return;
+  openViewing(selectedDate);
+};
 document.getElementById("prevMonth").onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()};
 document.getElementById("nextMonth").onclick=()=>{calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar()};
 document.getElementById("closeViewing").onclick=()=>document.getElementById("viewingModal").classList.remove("open");
