@@ -43,6 +43,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 
 .property-card.status-sold,.property-card.status-tenanted{background:rgba(220,248,226,.72)}
 .property-status{position:absolute;top:11px;right:11px;z-index:10;padding:6px 9px;border:1px solid rgba(50,190,90,.22);border-radius:999px;background:rgba(255,255,255,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#18b84b;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.property-viewing{position:absolute;top:11px;right:11px;z-index:10;padding:6px 9px;border:1px solid rgba(229,57,53,.22);border-radius:999px;background:rgba(255,255,255,.68);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f11;font-size:9px;font-weight:700;letter-spacing:.02em}
 
 .empty-preview{display:flex;align-items:center;justify-content:center}
 .add-property-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.68);color:#171719;border-radius:999px;padding:9px 13px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s ease}
@@ -68,7 +69,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 .property-controls{display:flex;align-items:center;gap:8px;margin-left:auto}
 .property-controls select{height:36px;border:1px solid rgba(0,0,0,.09);border-radius:999px;background:rgba(255,255,255,.72);padding:0 30px 0 12px;color:#222;font:inherit;font-size:11px;outline:none;backdrop-filter:blur(12px);cursor:pointer}
 @media(max-width:780px){.section-heading{align-items:flex-start;flex-direction:column}.property-controls{width:100%;margin-left:0}.property-controls select{flex:1;min-width:0}}
-@media(max-width:430px){.property-controls{flex-direction:column}.property-controls select{width:100%}}
+@media(max-width:430px){.property-controls{flex-direction:row}.property-controls select{width:auto;flex:1;min-width:0}}
 
 </style>
 </head>
@@ -124,6 +125,9 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
       <option value="price-low">Price: Low to High</option>
       <option value="location">Location: A–Z</option>
       <option value="favourites">Favourites First</option>
+      <option value="sold">Sold</option>
+      <option value="tenanted">Tenanted</option>
+      <option value="viewing-soon">Viewing Soon</option>
     </select>
   </div>
 </div>
@@ -186,7 +190,10 @@ function applyPropertyControls(){
     if(sort==="price-low")return propertyPrice(ai)-propertyPrice(bi);
     if(sort==="location")return propertyLocation(ai).localeCompare(propertyLocation(bi));
     if(sort==="favourites")return Number(!!favoriteState[bi])-Number(!!favoriteState[ai]);
-    return Number(ai)-Number(bi);
+    if(sort==="sold")return Number(propertyState[bi]?.status==="sold")-Number(propertyState[ai]?.status==="sold");
+    if(sort==="tenanted")return Number(propertyState[bi]?.status==="tenanted")-Number(propertyState[ai]?.status==="tenanted");
+    if(sort==="viewing-soon")return viewingTimestamp(ai)-viewingTimestamp(bi);
+    return viewingTimestamp(ai)-viewingTimestamp(bi) || Number(ai)-Number(bi);
   });
   visibleCards.forEach(card=>grid.appendChild(card));
   const count=document.getElementById("propertyCount");
@@ -313,6 +320,16 @@ function setProperty(card,data){
     status.className="property-status";
     status.textContent=data.status==="sold"?"Sold":"Tenanted";
     card.appendChild(status);
+  }else{
+    const viewing=viewingLabel(card.dataset.propertyId);
+    const existingViewing=card.querySelector(".property-viewing");
+    if(existingViewing)existingViewing.remove();
+    if(viewing){
+      const badge=document.createElement("div");
+      badge.className="property-viewing";
+      badge.textContent=viewing;
+      card.appendChild(badge);
+    }
   }
   card.querySelector("h2").textContent=data.name||"Property "+String(card.dataset.propertyId).padStart(3,"0");
   const amount=card.querySelector(".property-amount");
