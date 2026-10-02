@@ -294,7 +294,7 @@ if(card && data && data.image) setProperty(card,data);
 });
 }
 
-function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&","<":"<",">":">",'"':""","'":"'"}[c]))}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 
 function setProperty(card,data){
 if(!data || !card)return;
@@ -396,7 +396,7 @@ const propertyLink=document.getElementById("propertyLink").value.trim();
 if(!file||!file.type.startsWith("image/")){status.textContent="Please select a property screenshot.";return}
 const propertyTitle=document.getElementById("propertyTitle").value.trim();
 if(!propertyTitle){status.textContent="Please enter a property title.";return}
-if(propertyLink&&!/^https?:///i.test(propertyLink)){status.textContent="Please enter a valid property link.";return}
+if(propertyLink&&!/^https?:\/\//i.test(propertyLink)){status.textContent="Please enter a valid property link.";return}
 status.textContent="Reading screenshot…";
 try{
 const image=await new Promise((resolve,reject)=>{
