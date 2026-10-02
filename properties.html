@@ -76,6 +76,7 @@ main{max-width:1120px;margin:0 auto;padding:42px 34px 80px}
   <div class="property-price" id="propertyPrice">RM —</div>
 </div>
 <div class="property-actions">
+  <button class="property-action" id="markBooked" type="button">Mark Booked</button>
   <button class="property-action" id="markSold" type="button">Mark Sold</button>
   <button class="property-action" id="markTenanted" type="button">Mark Tenanted</button>
   <button class="property-action delete" id="deleteProperty" type="button">Delete Listing</button>
@@ -131,15 +132,27 @@ document.getElementById("propertyPrice").textContent=property.price||"RM —";
 
 function savePropertyStatus(status){
   if(!properties[propertyId])return;
-  const label=status==="sold"?"SOLD":"TENANTED";
-  if(!confirm("Mark this property as "+label+"?"))return;
-  properties[propertyId].status=status;
+  const currentStatus=properties[propertyId].status||"";
+  const isUndo=currentStatus===status;
+  const label=status==="sold"?"SOLD":status==="tenanted"?"TENANTED":"BOOKED";
+  if(!confirm(isUndo?"Undo "+label+" status?":"Mark this property as "+label+"?"))return;
+  if(isUndo)delete properties[propertyId].status;
+  else properties[propertyId].status=status;
   localStorage.setItem("bambooPropProperties",JSON.stringify(properties));
   window.location.href="index.html";
 }
 
+function updateStatusButtons(){
+  const currentStatus=properties[propertyId]?.status||"";
+  document.getElementById("markBooked").textContent=currentStatus==="booked"?"Undo Booked":"Mark Booked";
+  document.getElementById("markSold").textContent=currentStatus==="sold"?"Undo Sold":"Mark Sold";
+  document.getElementById("markTenanted").textContent=currentStatus==="tenanted"?"Undo Tenanted":"Mark Tenanted";
+}
+
+document.getElementById("markBooked").onclick=()=>savePropertyStatus("booked");
 document.getElementById("markSold").onclick=()=>savePropertyStatus("sold");
 document.getElementById("markTenanted").onclick=()=>savePropertyStatus("tenanted");
+updateStatusButtons();
 
 document.getElementById("deleteProperty").onclick=()=>{
   if(!confirm("Delete this listing permanently?"))return;
