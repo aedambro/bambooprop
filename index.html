@@ -312,6 +312,7 @@ if(count){
 const filledCount=Object.keys(propertyState).filter(id=>!deletedState[id]).length;
 count.textContent=(TOTAL_PROPERTIES-filledCount)+" property spaces left";
 }
+
 updatePropertyDashboard();
 }
 
@@ -538,6 +539,12 @@ break;
 
 screenshotInput.addEventListener("change",()=>{if(screenshotInput.files?.length)status.textContent="Screenshot selected. Click Confirm."});
 
+if("serviceWorker" in navigator){
+window.addEventListener("load",()=>{
+navigator.serviceWorker.register("./service-worker.js");
+});
+}
+
 let deferredPwaInstallPrompt=null;
 
 window.addEventListener("beforeinstallprompt",event=>{
@@ -572,13 +579,6 @@ window.addEventListener("appinstalled",()=>{
 pwaInstallPopup.classList.remove("open");
 deferredPwaInstallPrompt=null;
 });
-
-if("serviceWorker" in navigator){
-window.addEventListener("load",()=>{
-navigator.serviceWorker.register("./service-worker.js");
-});
-}
-  
 </script>
 
 </body>
