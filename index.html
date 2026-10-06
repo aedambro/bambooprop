@@ -363,16 +363,53 @@ restoreFavorite(index, card);
 return card;
 }
 
-const savedPropertyIds=Object.keys(propertyState)
+const activePropertyIds=Object.keys(propertyState)
 .filter(id=>!deletedState[id]&&Number.isInteger(Number(id))&&Number(id)>=1&&Number(id)<=TOTAL_PROPERTIES)
 .map(Number)
 .sort((a,b)=>a-b);
-if(!savedPropertyIds.length){
+
+const needsPropertyCompaction=Object.keys(deletedState).length>0||activePropertyIds.some((id,index)=>id!==index+1);
+
+if(needsPropertyCompaction){
+const storeKeys=[
+"bambooPropFavorites",
+"bambooPropViewings",
+"bambooPropContacts",
+"bambooPropOwnerContacts",
+"bambooPropImportantContacts",
+"bambooPropNotes"
+];
+
+const oldIds=[...activePropertyIds];
+const rebuiltProperties={};
+oldIds.forEach((oldId,index)=>{
+rebuiltProperties[String(index+1)]=propertyState[String(oldId)];
+});
+
+Object.keys(propertyState).forEach(id=>delete propertyState[id]);
+Object.assign(propertyState,rebuiltProperties);
+savePropertyState();
+
+storeKeys.forEach(key=>{
+const store=JSON.parse(localStorage.getItem(key)||"{}");
+const rebuiltStore={};
+oldIds.forEach((oldId,index)=>{
+const oldKey=String(oldId);
+if(Object.prototype.hasOwnProperty.call(store,oldKey))rebuiltStore[String(index+1)]=store[oldKey];
+});
+localStorage.setItem(key,JSON.stringify(rebuiltStore));
+});
+
 Object.keys(deletedState).forEach(id=>delete deletedState[id]);
 localStorage.setItem("bambooPropDeleted",JSON.stringify(deletedState));
 }
 
-const nextPropertyId=Array.from({length:TOTAL_PROPERTIES},(_,i)=>i+1).find(id=>!propertyState[String(id)])||TOTAL_PROPERTIES+1;
+const savedPropertyIds=Object.keys(propertyState)
+.filter(id=>Number.isInteger(Number(id))&&Number(id)>=1&&Number(id)<=TOTAL_PROPERTIES)
+.map(Number)
+.sort((a,b)=>a-b);
+
+const nextPropertyId=savedPropertyIds.length+1;
 [...new Set([...savedPropertyIds,nextPropertyId].filter(id=>id<=TOTAL_PROPERTIES))]
 .sort((a,b)=>a-b)
 .forEach(i=>grid.appendChild(makeCard(i)));
@@ -669,6 +706,8 @@ const candidates=[];
 const lines=Array.isArray(data?.lines)?data.lines:[];
 lines.forEach(line=>{
 const value=String(line?.text||"").replace(/\u00a0/g," ");
+const lowerValue=value.toLowerCase();
+if(/\/\s*month|per\s*month|monthly|calculator|estimated|est\.?\s*rm/.test(lowerValue))return;
 const match=value.match(/RM\s*\d[\d,]*(?:.\d{1,2})?/i);
 if(!match)return;
 const number=parseFloat(match[0].replace(/RM\s*/i,"").replace(/,/g,""));
