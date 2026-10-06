@@ -61,7 +61,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 .modal{position:relative;width:min(460px,100%);padding:28px;border:1px solid rgba(255,255,255,.65);border-radius:24px;background:rgba(255,255,255,.84);box-shadow:0 30px 90px rgba(0,0,0,.18);backdrop-filter:blur(30px)}
 .modal-close{position:absolute;top:14px;right:15px;border:0;background:rgba(0,0,0,.06);width:30px;height:30px;border-radius:50%;font-size:20px;cursor:pointer;color:#222}
 .modal-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:#888;margin-bottom:7px}.modal h2{margin:0;font-size:25px;letter-spacing:-.045em}.modal-subtitle{font-size:12px;color:#777;margin:7px 0 18px}
-.modal input{width:100%;height:46px;border:1px solid rgba(0,0,0,.12);border-radius:13px;background:rgba(255,255,255,.72);padding:0 14px;font:inherit;font-size:12px;outline:none}.modal input:focus{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+.modal input{width:100%;height:46px;border:1px solid rgba(0,0,0,.12);border-radius:13px;background:rgba(255,255,255,.72);padding:0 14px;font:inherit;font-size:12px;outline:none}.modal input:focus{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.06)}.manual-location-wrap{margin-top:10px}.manual-location-label{display:block;margin-bottom:6px;font-size:10px;color:#777}.manual-location-select{position:relative;display:flex;align-items:center}.manual-location-select svg{width:16px;height:16px;flex:0 0 auto;position:absolute;left:12px;z-index:1;pointer-events:none;fill:none;stroke:#27324a;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.manual-location-select select{width:100%;height:46px;border:1px solid rgba(0,0,0,.12);border-radius:13px;background:rgba(255,255,255,.72);padding:0 14px 0 36px;color:#222;font:inherit;font-size:12px;outline:none;backdrop-filter:blur(12px);cursor:pointer}.manual-location-select select:focus{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
 .modal-status{height:23px;padding-top:7px;font-size:11px;color:#777}.confirm-btn{width:100%;margin-top:8px;border:0;border-radius:13px;background:#111;color:white;height:45px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 
 .property-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -393,6 +393,163 @@ modal.innerHTML = `
     <input id="propertyScreenshot" type="file" accept="image/*" autocomplete="off">
     <input id="propertyTitle" type="text" placeholder="Property title" autocomplete="off" required>
     <input id="propertyLink" type="url" placeholder="Insert link to property" autocomplete="off">
+    <div class="manual-location-wrap" id="manualLocationWrap" hidden>
+      <label class="manual-location-label" for="manualLocation">Select property location</label>
+      <div class="manual-location-select">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>
+        <select id="manualLocation">
+          <option value="">Select city / state</option>
+          <optgroup label="Kuala Lumpur">
+            <option value="Kuala Lumpur, Kuala Lumpur">Kuala Lumpur</option>
+          </optgroup>
+          <optgroup label="Selangor">
+            <option value="Ampang, Selangor">Ampang</option>
+            <option value="Bandar Baru Bangi, Selangor">Bandar Baru Bangi</option>
+            <option value="Bandar Puncak Alam, Selangor">Bandar Puncak Alam</option>
+            <option value="Banting, Selangor">Banting</option>
+            <option value="Batang Kali, Selangor">Batang Kali</option>
+            <option value="Cheras, Selangor">Cheras</option>
+            <option value="Cyberjaya, Selangor">Cyberjaya</option>
+            <option value="Gombak, Selangor">Gombak</option>
+            <option value="Kajang, Selangor">Kajang</option>
+            <option value="Kapar, Selangor">Kapar</option>
+            <option value="Klang, Selangor">Klang</option>
+            <option value="Kuala Selangor, Selangor">Kuala Selangor</option>
+            <option value="Petaling Jaya, Selangor">Petaling Jaya</option>
+            <option value="Puchong, Selangor">Puchong</option>
+            <option value="Rawang, Selangor">Rawang</option>
+            <option value="Selayang, Selangor">Selayang</option>
+            <option value="Sepang, Selangor">Sepang</option>
+            <option value="Seri Kembangan, Selangor">Seri Kembangan</option>
+            <option value="Shah Alam, Selangor">Shah Alam</option>
+            <option value="Subang Jaya, Selangor">Subang Jaya</option>
+            <option value="Semenyih, Selangor">Semenyih</option>
+            <option value="Tanjong Karang, Selangor">Tanjong Karang</option>
+          </optgroup>
+          <optgroup label="Johor">
+            <option value="Batu Pahat, Johor">Batu Pahat</option>
+            <option value="Iskandar Puteri, Johor">Iskandar Puteri</option>
+            <option value="Johor Bahru, Johor">Johor Bahru</option>
+            <option value="Kluang, Johor">Kluang</option>
+            <option value="Kota Tinggi, Johor">Kota Tinggi</option>
+            <option value="Kulai, Johor">Kulai</option>
+            <option value="Mersing, Johor">Mersing</option>
+            <option value="Muar, Johor">Muar</option>
+            <option value="Pasir Gudang, Johor">Pasir Gudang</option>
+            <option value="Pontian, Johor">Pontian</option>
+            <option value="Segamat, Johor">Segamat</option>
+          </optgroup>
+          <optgroup label="Penang">
+            <option value="George Town, Penang">George Town</option>
+            <option value="Butterworth, Penang">Butterworth</option>
+            <option value="Bayan Lepas, Penang">Bayan Lepas</option>
+            <option value="Bukit Mertajam, Penang">Bukit Mertajam</option>
+            <option value="Nibong Tebal, Penang">Nibong Tebal</option>
+            <option value="Tanjung Bungah, Penang">Tanjung Bungah</option>
+          </optgroup>
+          <optgroup label="Perak">
+            <option value="Ipoh, Perak">Ipoh</option>
+            <option value="Batu Gajah, Perak">Batu Gajah</option>
+            <option value="Gerik, Perak">Gerik</option>
+            <option value="Kampar, Perak">Kampar</option>
+            <option value="Kuala Kangsar, Perak">Kuala Kangsar</option>
+            <option value="Lumut, Perak">Lumut</option>
+            <option value="Parit Buntar, Perak">Parit Buntar</option>
+            <option value="Sitiawan, Perak">Sitiawan</option>
+            <option value="Taiping, Perak">Taiping</option>
+            <option value="Teluk Intan, Perak">Teluk Intan</option>
+          </optgroup>
+          <optgroup label="Negeri Sembilan">
+            <option value="Kuala Pilah, Negeri Sembilan">Kuala Pilah</option>
+            <option value="Labu, Negeri Sembilan">Labu</option>
+            <option value="Nilai, Negeri Sembilan">Nilai</option>
+            <option value="Port Dickson, Negeri Sembilan">Port Dickson</option>
+            <option value="Rembau, Negeri Sembilan">Rembau</option>
+            <option value="Seremban, Negeri Sembilan">Seremban</option>
+            <option value="Tampin, Negeri Sembilan">Tampin</option>
+          </optgroup>
+          <optgroup label="Melaka">
+            <option value="Alor Gajah, Melaka">Alor Gajah</option>
+            <option value="Ayer Keroh, Melaka">Ayer Keroh</option>
+            <option value="Jasin, Melaka">Jasin</option>
+            <option value="Melaka City, Melaka">Melaka City</option>
+            <option value="Masjid Tanah, Melaka">Masjid Tanah</option>
+          </optgroup>
+          <optgroup label="Pahang">
+            <option value="Bentong, Pahang">Bentong</option>
+            <option value="Bera, Pahang">Bera</option>
+            <option value="Cameron Highlands, Pahang">Cameron Highlands</option>
+            <option value="Genting Highlands, Pahang">Genting Highlands</option>
+            <option value="Jerantut, Pahang">Jerantut</option>
+            <option value="Kuantan, Pahang">Kuantan</option>
+            <option value="Kuala Lipis, Pahang">Kuala Lipis</option>
+            <option value="Maran, Pahang">Maran</option>
+            <option value="Mentakab, Pahang">Mentakab</option>
+            <option value="Pekan, Pahang">Pekan</option>
+            <option value="Raub, Pahang">Raub</option>
+            <option value="Rompin, Pahang">Rompin</option>
+            <option value="Temerloh, Pahang">Temerloh</option>
+          </optgroup>
+          <optgroup label="Kedah">
+            <option value="Alor Setar, Kedah">Alor Setar</option>
+            <option value="Baling, Kedah">Baling</option>
+            <option value="Gurun, Kedah">Gurun</option>
+            <option value="Jitra, Kedah">Jitra</option>
+            <option value="Kulim, Kedah">Kulim</option>
+            <option value="Langkawi, Kedah">Langkawi</option>
+            <option value="Sungai Petani, Kedah">Sungai Petani</option>
+          </optgroup>
+          <optgroup label="Kelantan">
+            <option value="Bachok, Kelantan">Bachok</option>
+            <option value="Gua Musang, Kelantan">Gua Musang</option>
+            <option value="Kota Bharu, Kelantan">Kota Bharu</option>
+            <option value="Kuala Krai, Kelantan">Kuala Krai</option>
+            <option value="Pasir Mas, Kelantan">Pasir Mas</option>
+            <option value="Tanah Merah, Kelantan">Tanah Merah</option>
+            <option value="Tumpat, Kelantan">Tumpat</option>
+          </optgroup>
+          <optgroup label="Terengganu">
+            <option value="Besut, Terengganu">Besut</option>
+            <option value="Dungun, Terengganu">Dungun</option>
+            <option value="Kemaman, Terengganu">Kemaman</option>
+            <option value="Kuala Terengganu, Terengganu">Kuala Terengganu</option>
+            <option value="Marang, Terengganu">Marang</option>
+            <option value="Setiu, Terengganu">Setiu</option>
+          </optgroup>
+          <optgroup label="Perlis">
+            <option value="Arau, Perlis">Arau</option>
+            <option value="Kangar, Perlis">Kangar</option>
+            <option value="Kuala Perlis, Perlis">Kuala Perlis</option>
+          </optgroup>
+          <optgroup label="Sabah">
+            <option value="Kota Belud, Sabah">Kota Belud</option>
+            <option value="Kota Kinabalu, Sabah">Kota Kinabalu</option>
+            <option value="Keningau, Sabah">Keningau</option>
+            <option value="Lahad Datu, Sabah">Lahad Datu</option>
+            <option value="Papar, Sabah">Papar</option>
+            <option value="Sandakan, Sabah">Sandakan</option>
+            <option value="Semporna, Sabah">Semporna</option>
+            <option value="Tawau, Sabah">Tawau</option>
+          </optgroup>
+          <optgroup label="Sarawak">
+            <option value="Bintulu, Sarawak">Bintulu</option>
+            <option value="Kuching, Sarawak">Kuching</option>
+            <option value="Limbang, Sarawak">Limbang</option>
+            <option value="Miri, Sarawak">Miri</option>
+            <option value="Mukah, Sarawak">Mukah</option>
+            <option value="Samarahan, Sarawak">Samarahan</option>
+            <option value="Sibu, Sarawak">Sibu</option>
+            <option value="Sri Aman, Sarawak">Sri Aman</option>
+          </optgroup>
+          <optgroup label="Putrajaya">
+            <option value="Putrajaya, Putrajaya">Putrajaya</option>
+          </optgroup>
+          <optgroup label="Labuan">
+            <option value="Labuan, Labuan">Labuan</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
     <div id="modalStatus" class="modal-status"></div>
     <button id="confirmProperty" class="confirm-btn" type="button">Confirm</button>
   </div>`;
@@ -401,7 +558,7 @@ document.body.appendChild(modal);
 const screenshotInput = document.getElementById("propertyScreenshot");
 const status = document.getElementById("modalStatus");
 
-function openModal(card){activeCard=card;screenshotInput.value="";document.getElementById("propertyTitle").value="";document.getElementById("propertyLink").value="";status.textContent="";modal.classList.add("open");setTimeout(()=>screenshotInput.focus(),80)}
+function openModal(card){activeCard=card;screenshotInput.value="";document.getElementById("propertyTitle").value="";document.getElementById("propertyLink").value="";document.getElementById("manualLocation").value="";document.getElementById("manualLocationWrap").hidden=true;status.textContent="";modal.classList.add("open");setTimeout(()=>screenshotInput.focus(),80)}
 function closeModal(){modal.classList.remove("open");activeCard=null}
 modal.querySelector(".modal-close").onclick=closeModal;
 modal.onclick=e=>{if(e.target===modal)closeModal()};
@@ -457,10 +614,33 @@ applyPropertyControls();
 }
 
 function chooseLocation(text){
-const lines=text.split(/\r?\n/).map(v=>v.replace(/\s+/g," ").trim()).filter(v=>v.length>=3&&v.length<=120);
+const lines=text.split(/\r?\n/).map(v=>v.replace(/\s+/g," ").trim()).filter(v=>v.length>=3&&v.length<=160);
 const states="Selangor|Kuala Lumpur|Johor|Penang|Pulau Pinang|Perak|Melaka|Negeri Sembilan|Pahang|Kedah|Kelantan|Terengganu|Perlis|Sabah|Sarawak|Putrajaya|Labuan";
-const re=new RegExp(`([A-Za-z][A-Za-z .'-]{2,60}),\\s*(${states})\\b`,"i");
+const re=new RegExp(`([A-Za-z][A-Za-z .'-]{2,80}),\\s*(${states})\\b`,"i");
 for(const line of lines){const m=line.match(re);if(m)return `${m[1].trim()}, ${m[2].trim()}`;}
+const cityStates=[
+["Shah Alam","Selangor"],["Subang Jaya","Selangor"],["Petaling Jaya","Selangor"],["Puchong","Selangor"],["Rawang","Selangor"],["Kajang","Selangor"],["Klang","Selangor"],["Cyberjaya","Selangor"],["Seri Kembangan","Selangor"],["Selayang","Selangor"],["Ampang","Selangor"],["Bandar Baru Bangi","Selangor"],["Banting","Selangor"],["Batang Kali","Selangor"],["Gombak","Selangor"],["Kapar","Selangor"],["Kuala Selangor","Selangor"],["Sepang","Selangor"],["Semenyih","Selangor"],["Tanjong Karang","Selangor"],
+["Kuala Lumpur","Kuala Lumpur"],
+["Johor Bahru","Johor"],["Iskandar Puteri","Johor"],["Pasir Gudang","Johor"],["Kulai","Johor"],["Batu Pahat","Johor"],["Kluang","Johor"],["Kota Tinggi","Johor"],["Mersing","Johor"],["Muar","Johor"],["Pontian","Johor"],["Segamat","Johor"],
+["George Town","Penang"],["Butterworth","Penang"],["Bayan Lepas","Penang"],["Bukit Mertajam","Penang"],["Nibong Tebal","Penang"],["Tanjung Bungah","Penang"],
+["Ipoh","Perak"],["Batu Gajah","Perak"],["Gerik","Perak"],["Kampar","Perak"],["Kuala Kangsar","Perak"],["Lumut","Perak"],["Parit Buntar","Perak"],["Sitiawan","Perak"],["Taiping","Perak"],["Teluk Intan","Perak"],
+["Seremban","Negeri Sembilan"],["Nilai","Negeri Sembilan"],["Port Dickson","Negeri Sembilan"],["Kuala Pilah","Negeri Sembilan"],["Labu","Negeri Sembilan"],["Rembau","Negeri Sembilan"],["Tampin","Negeri Sembilan"],
+["Melaka City","Melaka"],["Ayer Keroh","Melaka"],["Alor Gajah","Melaka"],["Jasin","Melaka"],["Masjid Tanah","Melaka"],
+["Kuantan","Pahang"],["Bentong","Pahang"],["Bera","Pahang"],["Cameron Highlands","Pahang"],["Genting Highlands","Pahang"],["Jerantut","Pahang"],["Kuala Lipis","Pahang"],["Maran","Pahang"],["Mentakab","Pahang"],["Pekan","Pahang"],["Raub","Pahang"],["Rompin","Pahang"],["Temerloh","Pahang"],
+["Alor Setar","Kedah"],["Baling","Kedah"],["Gurun","Kedah"],["Jitra","Kedah"],["Kulim","Kedah"],["Langkawi","Kedah"],["Sungai Petani","Kedah"],
+["Kota Bharu","Kelantan"],["Bachok","Kelantan"],["Gua Musang","Kelantan"],["Kuala Krai","Kelantan"],["Pasir Mas","Kelantan"],["Tanah Merah","Kelantan"],["Tumpat","Kelantan"],
+["Kuala Terengganu","Terengganu"],["Besut","Terengganu"],["Dungun","Terengganu"],["Kemaman","Terengganu"],["Marang","Terengganu"],["Setiu","Terengganu"],
+["Kangar","Perlis"],["Arau","Perlis"],["Kuala Perlis","Perlis"],
+["Kota Kinabalu","Sabah"],["Kota Belud","Sabah"],["Keningau","Sabah"],["Lahad Datu","Sabah"],["Papar","Sabah"],["Sandakan","Sabah"],["Semporna","Sabah"],["Tawau","Sabah"],
+["Kuching","Sarawak"],["Bintulu","Sarawak"],["Limbang","Sarawak"],["Miri","Sarawak"],["Mukah","Sarawak"],["Samarahan","Sarawak"],["Sibu","Sarawak"],["Sri Aman","Sarawak"],
+["Putrajaya","Putrajaya"],["Labuan","Labuan"]
+];
+const lowerText=lines.join(" ").toLowerCase();
+cityStates.sort((a,b)=>b[0].length-a[0].length);
+for(const [city,state] of cityStates){
+const reCity=new RegExp(`\\b${city.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&")}\\b`,"i");
+if(reCity.test(lowerText))return `${city}, ${state}`;
+}
 const tagged=lines.find(line=>/(location|address|area|property location|located in|located at)/i.test(line));
 if(tagged)return tagged.replace(/^(location|address|area|property location|located in|located at)\s*[:-]?\s*/i,"").trim();
 return "Location";
@@ -501,7 +681,6 @@ const file=screenshotInput.files&&screenshotInput.files[0];
 const propertyLink=document.getElementById("propertyLink").value.trim();
 if(!file||!file.type.startsWith("image/")){status.textContent="Please select a property screenshot.";return}
 const propertyTitle=document.getElementById("propertyTitle").value.trim();
-if(!propertyTitle){status.textContent="Please enter a property title.";return}
 if(propertyLink&&!/^https?:\/\//i.test(propertyLink)){status.textContent="Please enter a valid property link.";return}
 status.textContent="Reading screenshot…";
 try{
@@ -529,9 +708,17 @@ if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please ch
 const worker=await Tesseract.createWorker("eng");
 let text="";
 try{text=(await worker.recognize(file)).data.text||""}finally{await worker.terminate()}
-const title=propertyTitle;
+const title=propertyTitle||"Property "+String(activeCard.dataset.propertyId).padStart(3,"0");
 const price=chooseTitle(text);
-const location=chooseLocation(text);
+let location=chooseLocation(text);
+const manualLocationWrap=document.getElementById("manualLocationWrap");
+const manualLocation=document.getElementById("manualLocation");
+const needsManualLocation=location==="Location"||price==="RM —";
+if(needsManualLocation){
+manualLocationWrap.hidden=false;
+if(!manualLocation.value){status.textContent="Please select the property location.";return}
+location=manualLocation.value;
+}
 const finalUrl=propertyLink||"#";
 const map=location!=="Location"?"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location):"#";
 setProperty(activeCard,{url:finalUrl,name:title,title:price,price,location,map,image});
