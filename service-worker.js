@@ -1,4 +1,4 @@
-const CACHE_NAME = "bamboo-prop-v1";
+const CACHE_NAME = "rakugent-v1";
 
 const APP_FILES = [
   "./",
