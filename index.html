@@ -714,7 +714,7 @@ if(!Number.isFinite(number))return;
 const start=match.index||0;
 const context=normalized.slice(Math.max(0,start-30),Math.min(normalized.length,start+value.length+40)).toLowerCase();
 
-if(/\/\s*month|per\s*month|monthly|calculator|estimated|est\.?\s*rm/.test(context))return;
+
 
 candidates.push({text:value,number});
 });
@@ -724,7 +724,7 @@ const lines=Array.isArray(data?.lines)?data.lines:[];
 lines.forEach(line=>{
 const value=String(line?.text||"").replace(/\u00a0/g," ");
 const lowerValue=value.toLowerCase();
-if(/\/\s*month|per\s*month|monthly|calculator|estimated|est\.?\s*rm/.test(lowerValue))return;
+
 const matches=[...value.matchAll(/RM\s*\d[\d,]*(?:\.\d{1,2})?/gi)];
 matches.forEach(match=>{
 const number=parseFloat(match[0].replace(/RM\s*/i,"").replace(/,/g,""));
@@ -802,7 +802,7 @@ const number=parseFloat(value.replace(/RM\s*/i,"").replace(/,/g,""));
 if(!Number.isFinite(number))return;
 
 const lowerWord=wordText.toLowerCase();
-if(/\/\s*month|per\s*month|monthly|calculator|estimated|est\.?\s*rm/.test(lowerWord))return;
+
 
 const visual=getDarkness(bbox);
 const existing=candidates.find(candidate=>candidate.number===number&&candidate.text===value);
