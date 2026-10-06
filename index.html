@@ -21,9 +21,9 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;background:lin
 .brand-logo{display:block;width:clamp(110px,12vw,170px);height:auto;object-fit:contain}
 .header-note{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:#8b8b90}
 main{padding:42px 34px 80px}
-.section-heading{display:flex;align-items:baseline;gap:14px;margin-bottom:22px}
+.section-heading{display:flex;flex-direction:column;align-items:stretch;gap:22px;margin-bottom:22px}
 .section-heading h1{margin:0;font-size:clamp(22px,2.2vw,31px);letter-spacing:-.045em;font-weight:650}
-.count{color:var(--muted);font-size:13px}
+.count{display:block;color:var(--muted);font-size:13px;margin-top:5px}
 .property-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
 .property-card{position:relative;min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:var(--glass);box-shadow:var(--shadow);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
 .property-card:hover{transform:translateY(-3px);box-shadow:0 24px 60px rgba(0,0,0,.1);border-color:rgba(0,0,0,.15)}
@@ -34,8 +34,8 @@ main{padding:42px 34px 80px}
 .placeholder-preview{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(224,224,221,.55)),repeating-linear-gradient(45deg,transparent 0 12px,rgba(0,0,0,.025) 12px 13px)}
 .placeholder-number{font-size:29px;font-weight:650;letter-spacing:-.06em}.placeholder-label{font-size:10px;color:#9a9a9e;letter-spacing:.13em;text-transform:uppercase}
 .property-info{padding:14px 15px 15px}.property-info h2{margin:0 0 4px;font-size:15px;font-weight:600;letter-spacing:-.025em}
-.property-amount{font-size:13px;font-weight:600;margin-bottom:10px;letter-spacing:-.02em}.meta-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.location{min-width:0;display:flex;align-items:center;gap:6px;color:#707075;text-decoration:none;font-size:11px;line-height:1.3}
+.property-amount{font-size:14px;font-weight:650;margin-bottom:10px;letter-spacing:-.025em;color:#0a9f68}.meta-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.location{min-width:0;display:flex;align-items:center;gap:6px;color:#707075;text-decoration:none;font-size:9px;line-height:1.3}
 .location span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .copy-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;border:0;padding:5px 7px;border-radius:999px;color:#171719;background:rgba(0,0,0,.055);font:inherit;font-size:10px;cursor:pointer;transition:background .18s ease,transform .18s ease}
@@ -66,27 +66,37 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 
 .property-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .property-title-row h2{margin:0!important}
-.favorite-btn{position:absolute;top:11px;left:11px;z-index:10;flex:0 0 auto;border:0;background:transparent;padding:2px;font-size:23px;line-height:1;color:#777;cursor:pointer;transition:transform .18s ease,color .18s ease}
+.favorite-btn{position:absolute;top:11px;left:11px;z-index:10;flex:0 0 auto;border:0;background:rgba(255,255,255,.72);padding:8px;width:40px;height:40px;border-radius:50%;font-size:23px;line-height:1;color:#777;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .18s ease,color .18s ease}
 .favorite-btn:hover{transform:scale(1.08);color:#111}
 .favorite-btn.active{color:#e53935}
-.heading-left{display:flex;align-items:baseline;gap:14px;min-width:0}
-.property-controls{display:flex;align-items:center;gap:8px;margin-left:auto}
-.property-controls select{height:36px;border:1px solid rgba(0,0,0,.09);border-radius:999px;background:rgba(255,255,255,.72);padding:0 30px 0 12px;color:#222;font:inherit;font-size:11px;outline:none;backdrop-filter:blur(12px);cursor:pointer}
+.heading-left{display:flex;flex-direction:column;align-items:flex-start;gap:0;min-width:0}
+.property-controls{display:flex;align-items:center;gap:12px;width:100%;margin-left:0}
+.property-filter{position:relative;flex:1;min-width:0}
+.property-filter svg{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:20px;height:20px;z-index:2;pointer-events:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.property-filter:after{content:"⌄";position:absolute;right:17px;top:50%;transform:translateY(-56%);font-size:22px;line-height:1;color:#1d2a4f;pointer-events:none}
+.property-controls select{appearance:none;-webkit-appearance:none;width:100%;height:52px;border:1px solid rgba(0,0,0,.09);border-radius:999px;background:rgba(255,255,255,.72);padding:0 44px 0 50px;color:#222;font:inherit;font-size:16px;outline:none;backdrop-filter:blur(12px);cursor:pointer}
 @media(max-width:780px){.section-heading{align-items:flex-start;flex-direction:column}.property-controls{width:100%;margin-left:0}.property-controls select{flex:1;min-width:0}}
 @media(max-width:430px){.property-controls{flex-direction:row}.property-controls select{width:auto;flex:1;min-width:0}}
 
-.property-dashboard{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:30px;overflow:visible;padding:2px 2px 6px;width:100%}
-.dashboard-gauge{position:relative;flex:0 0 78px;width:78px;height:100px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:transparent;box-shadow:none;color:#111;border:2px solid #111;overflow:hidden}
-.dashboard-gauge:before{content:none}
-.dashboard-gauge-content{position:relative;z-index:1;text-align:center;line-height:1;color:#111;max-width:100%;padding:0 5px}
-.dashboard-gauge-number{font-size:19px;font-weight:650;letter-spacing:-.05em;color:#111}
-.dashboard-gauge-label{margin-top:5px;font-size:7px;color:#111;letter-spacing:.08em;text-transform:uppercase;white-space:normal;line-height:1.1}
-.dashboard-gauge.viewing{border-color:#f11}
-.dashboard-gauge.booked{border-color:#ff8500}
-.dashboard-gauge.sold{border-color:#18b84b}
-.dashboard-gauge.tenanted{border-color:#18b84b}
-.dashboard-gauge.total{border-color:#111}
-@media(max-width:680px){.property-dashboard{gap:5px;margin-bottom:24px;justify-content:center;overflow:visible;padding:2px 0 6px;width:100%}.dashboard-gauge{flex:1 1 0;max-width:54px;width:54px;height:70px;border-width:2px}.dashboard-gauge-content{padding:0 2px}.dashboard-gauge-number{font-size:13px}.dashboard-gauge-label{font-size:5px;letter-spacing:.05em;line-height:1.05;margin-top:3px}}
+.property-dashboard{display:flex;align-items:stretch;justify-content:center;gap:10px;margin-bottom:34px;overflow:visible;padding:12px;border-radius:24px;background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.72);box-shadow:0 14px 40px rgba(0,0,0,.04);backdrop-filter:blur(18px) saturate(135%);-webkit-backdrop-filter:blur(18px) saturate(135%);width:100%}
+.dashboard-gauge{position:relative;flex:1 1 0;min-width:0;height:126px;border-radius:20px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.62);box-shadow:none;color:#17213a;border:1px solid rgba(0,0,0,.025);border-bottom-width:6px;overflow:hidden}
+.dashboard-gauge:before{content:"";position:absolute;top:23px;left:50%;width:38px;height:38px;transform:translateX(-50%);border-radius:12px;background:rgba(255,255,255,.28)}
+.dashboard-gauge-content{position:relative;z-index:1;text-align:center;line-height:1;color:#17213a;max-width:100%;padding:0 6px;padding-top:7px}
+.dashboard-gauge-icon{display:flex;align-items:center;justify-content:center;width:38px;height:38px;margin:0 auto 13px}
+.dashboard-gauge-icon svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.dashboard-gauge-number{font-size:31px;font-weight:700;letter-spacing:-.05em;color:#17213a}
+.dashboard-gauge-label{margin-top:9px;font-size:11px;color:#17213a;letter-spacing:.01em;text-transform:uppercase;white-space:normal;line-height:1.15;font-weight:500}
+.dashboard-gauge.viewing{background:rgba(255,226,226,.62);border-bottom-color:#ff625f;color:#f04440}
+.dashboard-gauge.viewing .dashboard-gauge-icon,.dashboard-gauge.viewing .dashboard-gauge-number,.dashboard-gauge.viewing .dashboard-gauge-label{color:#f04440}
+.dashboard-gauge.booked{background:rgba(255,241,221,.68);border-bottom-color:#ff9410;color:#f28b00}
+.dashboard-gauge.booked .dashboard-gauge-icon,.dashboard-gauge.booked .dashboard-gauge-number,.dashboard-gauge.booked .dashboard-gauge-label{color:#f28b00}
+.dashboard-gauge.sold{background:rgba(222,247,237,.72);border-bottom-color:#12a875;color:#0a9f68}
+.dashboard-gauge.sold .dashboard-gauge-icon,.dashboard-gauge.sold .dashboard-gauge-number,.dashboard-gauge.sold .dashboard-gauge-label{color:#0a9f68}
+.dashboard-gauge.tenanted{background:rgba(221,247,240,.72);border-bottom-color:#18a98b;color:#159c7c}
+.dashboard-gauge.tenanted .dashboard-gauge-icon,.dashboard-gauge.tenanted .dashboard-gauge-number,.dashboard-gauge.tenanted .dashboard-gauge-label{color:#159c7c}
+.dashboard-gauge.total{background:rgba(232,233,250,.72);border-bottom-color:#5c60b8;color:#50549f}
+.dashboard-gauge.total .dashboard-gauge-icon,.dashboard-gauge.total .dashboard-gauge-number,.dashboard-gauge.total .dashboard-gauge-label{color:#50549f}
+@media(max-width:680px){.property-dashboard{gap:6px;margin-bottom:30px;padding:10px;border-radius:22px}.dashboard-gauge{height:124px;border-radius:18px;border-bottom-width:6px}.dashboard-gauge:before{top:20px;width:34px;height:34px;border-radius:10px}.dashboard-gauge-content{padding:0 2px;padding-top:5px}.dashboard-gauge-icon{width:34px;height:34px;margin-bottom:12px}.dashboard-gauge-icon svg{width:31px;height:31px}.dashboard-gauge-number{font-size:27px}.dashboard-gauge-label{font-size:10px;line-height:1.15;margin-top:8px}}
 
 .pwa-install-popup{position:fixed;bottom:14px;left:50%;transform:translate(-50%,130%);z-index:1000;width:min(420px,calc(100% - 28px));padding:13px 14px;border:1px solid rgba(255,255,255,.72);border-radius:18px;background:rgba(255,255,255,.78);box-shadow:0 18px 50px rgba(0,0,0,.16);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);display:flex;align-items:center;gap:12px;transition:transform .28s ease}
 .pwa-install-popup.open{transform:translate(-50%,0)}
@@ -106,30 +116,35 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 <div class="property-dashboard" aria-label="Property dashboard">
   <div class="dashboard-gauge viewing">
     <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></div>
       <div class="dashboard-gauge-number" id="dashboardUpcoming">0</div>
       <div class="dashboard-gauge-label">Upcoming Viewing</div>
     </div>
   </div>
   <div class="dashboard-gauge booked">
     <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M8 3.5v4M16 3.5v4M4 10h16"/></svg></div>
       <div class="dashboard-gauge-number" id="dashboardBooked">0</div>
       <div class="dashboard-gauge-label">Booked</div>
     </div>
   </div>
   <div class="dashboard-gauge sold">
     <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.7 2.7L16.5 9"/></svg></div>
       <div class="dashboard-gauge-number" id="dashboardSold">0</div>
       <div class="dashboard-gauge-label">Sold</div>
     </div>
   </div>
   <div class="dashboard-gauge tenanted">
     <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20.5V11Z"/><path d="M9 22v-6h6v6"/></svg></div>
       <div class="dashboard-gauge-number" id="dashboardTenanted">0</div>
       <div class="dashboard-gauge-label">Tenanted</div>
     </div>
   </div>
   <div class="dashboard-gauge total">
     <div class="dashboard-gauge-content">
+      <div class="dashboard-gauge-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg></div>
       <div class="dashboard-gauge-number" id="dashboardTotal">0</div>
       <div class="dashboard-gauge-label">Total Properties</div>
     </div>
@@ -139,7 +154,9 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 <div class="section-heading">
   <div class="heading-left"><h1>My Properties</h1><span class="count" id="propertyCount">250 listings · 50 rows</span></div>
   <div class="property-controls">
-    <select id="locationFilter" aria-label="Filter by location">
+    <div class="property-filter">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>
+      <select id="locationFilter" aria-label="Filter by location">
       <option value="all">All locations</option>
       <optgroup label="Cities / Areas">
         <option value="Kuala Lumpur">Kuala Lumpur</option>
@@ -178,8 +195,11 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
         <option value="Labuan">Labuan</option>
       </optgroup>
       <option value="favourites">Favourites</option>
-    </select>
-    <select id="sortProperties" aria-label="Sort properties">
+      </select>
+    </div>
+    <div class="property-filter">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M7 4l-3 3M7 4l3 3M17 20V4M17 20l-3-3M17 20l3-3"/></svg>
+      <select id="sortProperties" aria-label="Sort properties">
       <option value="default">Sort: Default</option>
       <option value="price-high">Price: High to Low</option>
       <option value="price-low">Price: Low to High</option>
@@ -189,7 +209,8 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
       <option value="tenanted">Tenanted</option>
       <option value="booked">Booked</option>
       <option value="viewing-soon">Viewing Soon</option>
-    </select>
+      </select>
+    </div>
   </div>
 </div>
 <section class="property-grid" id="propertyGrid" aria-label="My properties"></section>
@@ -329,7 +350,7 @@ function makeCard(index) {
 const card = document.createElement("article");
 card.className = "property-card";
 card.dataset.propertyId = String(index);
-card.innerHTML = `     <div class="preview-shell empty-preview">       <button class="add-property-btn" type="button"><span class="plus">+</span><span>Add Property</span></button>     </div>     <div class="property-info">       <div class="property-title-row">         <h2>Property ${String(index).padStart(3,"0")}</h2>         <button class="favorite-btn" type="button" aria-label="Favourite property" title="Favourite property">♡</button>       </div>       <div class="property-amount">RM —</div>       <div class="meta-row">         <span class="location empty-location">           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>           <span>Location</span>         </span>         <button class="copy-btn" type="button" disabled>           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2v8a2 2 0 0 1 2 2"/></svg>           <span>Copy</span>         </button>         <a class="copy-btn visit-btn" href="#" target="_blank" rel="noopener" aria-label="Visit property">           <span>Visit</span>         </a>       </div>     </div>`;
+card.innerHTML = `     <div class="preview-shell empty-preview">       <button class="add-property-btn" type="button"><span class="plus">+</span><span>Add Property</span></button>     </div>     <div class="property-info">       <div class="property-title-row">         <h2>Property ${String(index).padStart(3,"0")}</h2>         <button class="favorite-btn" type="button" aria-label="Favourite property" title="Favourite property">♡</button>       </div>       <div class="property-amount">RM —</div>       <div class="meta-row">         <span class="location empty-location">           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>           <span>Location</span>         </span>       </div>     </div>`;
 card.querySelector(".add-property-btn").onclick = (e) => { e.stopPropagation(); openModal(card); };
 card.querySelector(".favorite-btn").onclick = (e) => {
 e.stopPropagation();
@@ -433,19 +454,6 @@ if(amount)amount.textContent=data.price||data.title||"RM —";
 const oldLocation=card.querySelector(".location");
 oldLocation.outerHTML=`<a class="location" href="${data.map}" target="_blank" rel="noopener">     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg>     <span>${escapeHtml(data.location)}</span></a>`;
 
-const copy=card.querySelector(".copy-btn");
-copy.disabled=false;
-copy.dataset.copy=data.url;
-copy.onclick=async()=>{
-try{await navigator.clipboard.writeText(data.url)}catch{
-const a=document.createElement("textarea");a.value=data.url;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();
-}
-const s=copy.querySelector("span");copy.classList.add("copied");s.textContent="Copied";
-setTimeout(()=>{copy.classList.remove("copied");s.textContent="Copy"},1300);
-};
-
-const visit=card.querySelector(".visit-btn");
-visit.href=data.url||"#";
 applyPropertyControls();
 }
 
