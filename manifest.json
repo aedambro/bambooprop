@@ -1,7 +1,7 @@
 {
-  "name": "Bamboo Prop",
-  "short_name": "Bamboo Prop",
-  "description": "Bamboo Prop property workspace",
+  "name": "Rakugent",
+  "short_name": "Rakugent",
+  "description": "Rakugent agent workspace",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
