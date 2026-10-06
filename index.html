@@ -793,7 +793,7 @@ ocrData=result.data;
 }finally{await worker.terminate()}
 const title=propertyTitle||"Property "+String(activeCard.dataset.propertyId).padStart(3,"0");
 const isMudah=/mudah(?:\.my)?/i.test(propertyLink)||/mudah(?:\.my)?|mudah intelligence/i.test(text);
-const price=isMudah?chooseMudahPrice(ocrData,text):chooseTitle(text);
+const price=chooseMudahPrice(ocrData,text);
 let location=chooseLocation(text);
 const manualLocationWrap=document.getElementById("manualLocationWrap");
 const manualLocation=document.getElementById("manualLocation");
