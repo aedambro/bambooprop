@@ -316,7 +316,7 @@ cards.forEach(card=>{
 const id=card.dataset.propertyId;
 const location=propertyLocation(id);
 const isFav=!!favoriteState[id];
-let visible=!deletedState[id];
+let visible=!deletedState[id]||!propertyState[id];
 if(visible&&filter==="favourites") visible=isFav;
 else if(filter!=="all") visible=location.includes(String(filter).toLowerCase());
 card.style.display=visible?"":"none";
@@ -678,7 +678,7 @@ const height=Math.max(0,(bbox.y1||0)-(bbox.y0||0));
 candidates.push({text:match[0].replace(/\s+/g," ").trim(),number,height});
 });
 if(!candidates.length)return chooseTitle(text);
-candidates.sort((a,b)=>b.height-a.height||b.number-a.number);
+candidates.sort((a,b)=>b.number-a.number||b.height-a.height);
 return candidates[0].text;
 }
 
