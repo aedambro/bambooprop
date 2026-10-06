@@ -372,8 +372,9 @@ Object.keys(deletedState).forEach(id=>delete deletedState[id]);
 localStorage.setItem("bambooPropDeleted",JSON.stringify(deletedState));
 }
 
-const nextPropertyId=savedPropertyIds.length?Math.max(...savedPropertyIds)+1:1;
+const nextPropertyId=Array.from({length:TOTAL_PROPERTIES},(_,i)=>i+1).find(id=>!propertyState[String(id)])||TOTAL_PROPERTIES+1;
 [...new Set([...savedPropertyIds,nextPropertyId].filter(id=>id<=TOTAL_PROPERTIES))]
+.sort((a,b)=>a-b)
 .forEach(i=>grid.appendChild(makeCard(i)));
 document.getElementById("locationFilter").addEventListener("change",applyPropertyControls);
 document.getElementById("sortProperties").addEventListener("change",applyPropertyControls);
@@ -580,7 +581,7 @@ preview.innerHTML=`<a class="property-preview-link" href="properties.html?id=${e
 
 propertyState[card.dataset.propertyId]=data;
 savePropertyState();
-const nextId=Math.max(...Object.keys(propertyState).map(id=>Number(id)).filter(id=>Number.isFinite(id)),0)+1;
+const nextId=Array.from({length:TOTAL_PROPERTIES},(_,i)=>i+1).find(id=>!propertyState[String(id)])||TOTAL_PROPERTIES+1;
 if(nextId<=TOTAL_PROPERTIES&&!grid.querySelector('[data-property-id="'+nextId+'"]')){
 grid.appendChild(makeCard(nextId));
 }
@@ -663,6 +664,24 @@ return parsed[0].text;
 return "RM —";
 }
 
+function chooseMudahPrice(data,text){
+const candidates=[];
+const lines=Array.isArray(data?.lines)?data.lines:[];
+lines.forEach(line=>{
+const value=String(line?.text||"").replace(/\u00a0/g," ");
+const match=value.match(/RM\s*\d[\d,]*(?:.\d{1,2})?/i);
+if(!match)return;
+const number=parseFloat(match[0].replace(/RM\s*/i,"").replace(/,/g,""));
+if(!Number.isFinite(number))return;
+const bbox=line?.bbox||{};
+const height=Math.max(0,(bbox.y1||0)-(bbox.y0||0));
+candidates.push({text:match[0].replace(/\s+/g," ").trim(),number,height});
+});
+if(!candidates.length)return chooseTitle(text);
+candidates.sort((a,b)=>b.height-a.height||b.number-a.number);
+return candidates[0].text;
+}
+
 async function extractTitleFromScreenshot(file){
 if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please check your internet connection.");
 const worker=await Tesseract.createWorker("eng");
@@ -706,9 +725,15 @@ status.textContent="Extracting price and location…";
 if(!window.Tesseract)throw new Error("OCR library could not be loaded. Please check your internet connection.");
 const worker=await Tesseract.createWorker("eng");
 let text="";
-try{text=(await worker.recognize(file)).data.text||""}finally{await worker.terminate()}
+let ocrData=null;
+try{
+const result=await worker.recognize(file);
+text=result.data.text||"";
+ocrData=result.data;
+}finally{await worker.terminate()}
 const title=propertyTitle||"Property "+String(activeCard.dataset.propertyId).padStart(3,"0");
-const price=chooseTitle(text);
+const isMudah=/mudah(?:\.my)?/i.test(propertyLink)||/mudah(?:\.my)?|mudah intelligence/i.test(text);
+const price=isMudah?chooseMudahPrice(ocrData,text):chooseTitle(text);
 let location=chooseLocation(text);
 const manualLocationWrap=document.getElementById("manualLocationWrap");
 const manualLocation=document.getElementById("manualLocation");
