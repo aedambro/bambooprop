@@ -52,6 +52,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 
 .empty-preview{display:flex;align-items:center;justify-content:center}
 .add-property-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.68);color:#171719;border-radius:999px;padding:9px 13px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s ease}
+.add-property-top{border:0;border-radius:999px;background:#111;color:#fff;padding:9px 13px;font:inherit;font-size:10px;font-weight:600;cursor:pointer}.add-property-top:hover{opacity:.86}
 .add-property-btn:hover
 .add-property-btn .plus{font-size:17px;font-weight:400;line-height:10px}
 .empty-location{opacity:.48}.copy-btn:disabled{opacity:.45;cursor:default}
@@ -209,7 +210,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
       <option value="tenanted">Tenanted</option>
       <option value="booked">Booked</option>
       <option value="viewing-soon">Viewing Soon</option>
-    </select></div>
+    </select><button class="add-property-top" id="addPropertyTop" type="button">+ Property</button></div>
   </div>
 </div>
 <section class="property-grid" id="propertyGrid" aria-label="My properties"></section>
@@ -409,10 +410,11 @@ const savedPropertyIds=Object.keys(propertyState)
 .map(Number)
 .sort((a,b)=>a-b);
 
-const nextPropertyId=savedPropertyIds.length+1;
-[...new Set([...savedPropertyIds,nextPropertyId].filter(id=>id<=TOTAL_PROPERTIES))]
-.sort((a,b)=>a-b)
-.forEach(i=>grid.appendChild(makeCard(i)));
+if(savedPropertyIds.length){
+savedPropertyIds.forEach(i=>grid.appendChild(makeCard(i)));
+}else{
+grid.appendChild(makeCard(1));
+}
 document.getElementById("locationFilter").addEventListener("change",applyPropertyControls);
 document.getElementById("sortProperties").addEventListener("change",applyPropertyControls);
 applyPropertyControls();
@@ -597,9 +599,26 @@ const screenshotInput = document.getElementById("propertyScreenshot");
 const status = document.getElementById("modalStatus");
 
 function openModal(card){activeCard=card;screenshotInput.value="";document.getElementById("propertyTitle").value="";document.getElementById("propertyLink").value="";document.getElementById("manualLocation").value="";document.getElementById("manualLocationWrap").hidden=true;status.textContent="";modal.classList.add("open");setTimeout(()=>screenshotInput.focus(),80)}
-function closeModal(){modal.classList.remove("open");activeCard=null}
+function closeModal(){if(activeCard?.dataset.pending&&!propertyState[activeCard.dataset.propertyId])activeCard.remove();modal.classList.remove("open");activeCard=null}
 modal.querySelector(".modal-close").onclick=closeModal;
 modal.onclick=e=>{if(e.target===modal)closeModal()};
+
+document.getElementById("addPropertyTop").onclick=()=>{
+const filledCount=Object.keys(propertyState).filter(id=>!deletedState[id]&&propertyState[id]).length;
+if(!filledCount){
+let card=grid.querySelector('[data-property-id="1"]');
+if(!card){card=makeCard(1);grid.appendChild(card);}
+openModal(card);
+return;
+}
+const nextId=Array.from({length:TOTAL_PROPERTIES},(_,i)=>i+1).find(id=>!propertyState[String(id)])||TOTAL_PROPERTIES+1;
+if(nextId>TOTAL_PROPERTIES)return;
+const card=makeCard(nextId);
+card.style.display="none";
+card.dataset.pending="true";
+grid.appendChild(card);
+openModal(card);
+};
 
 function restoreSavedProperties(){
 Object.entries(propertyState).forEach(([id,data])=>{
@@ -618,10 +637,8 @@ preview.innerHTML=`<a class="property-preview-link" href="properties.html?id=${e
 
 propertyState[card.dataset.propertyId]=data;
 savePropertyState();
-const nextId=Array.from({length:TOTAL_PROPERTIES},(_,i)=>i+1).find(id=>!propertyState[String(id)])||TOTAL_PROPERTIES+1;
-if(nextId<=TOTAL_PROPERTIES&&!grid.querySelector('[data-property-id="'+nextId+'"]')){
-grid.appendChild(makeCard(nextId));
-}
+card.style.display="";
+delete card.dataset.pending;
 delete deletedState[card.dataset.propertyId];
 card.classList.toggle("status-sold",data.status==="sold");
 card.classList.toggle("status-tenanted",data.status==="tenanted");
