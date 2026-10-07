@@ -52,7 +52,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 
 .empty-preview{display:flex;align-items:center;justify-content:center}
 .add-property-btn{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.68);color:#171719;border-radius:999px;padding:9px 13px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;backdrop-filter:blur(12px);transition:all .18s ease}
-.add-property-top{margin-left:auto;border:0;border-radius:999px;background:#111;color:#fff;padding:9px 13px;font:inherit;font-size:10px;font-weight:600;cursor:pointer}.add-property-top:hover{opacity:.86}
+.add-property-top{border:0;border-radius:999px;background:#111;color:#fff;padding:9px 13px;font:inherit;font-size:10px;font-weight:600;cursor:pointer}.add-property-top:hover{opacity:.86}
 .add-property-btn:hover
 .add-property-btn .plus{font-size:17px;font-weight:400;line-height:10px}
 .empty-location{opacity:.48}.copy-btn:disabled{opacity:.45;cursor:default}
@@ -70,8 +70,8 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 .favorite-btn{position:absolute;top:11px;left:11px;z-index:10;flex:0 0 auto;border:0;background:transparent;padding:2px;font-size:23px;line-height:1;color:#777;cursor:pointer;transition:transform .18s ease,color .18s ease}
 .favorite-btn:hover{transform:scale(1.08);color:#111}
 .favorite-btn.active{color:#e53935}
-.heading-left{display:flex;align-items:flex-start;flex-direction:column;gap:5px;min-width:0}
-.property-controls{display:flex;align-items:center;gap:8px}
+.heading-left{display:flex;align-items:flex-start;flex-direction:column;gap:5px;min-width:0}.heading-title-row{display:flex;align-items:center;gap:12px}
+.property-controls{display:flex;align-items:center;gap:8px;margin-left:auto}
 .filter-select{position:relative;display:flex;align-items:center}
 .filter-select svg{width:16px;height:16px;flex:0 0 auto;position:absolute;left:12px;z-index:1;pointer-events:none;fill:none;stroke:#27324a;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .filter-select select{text-indent:24px}
@@ -158,8 +158,7 @@ svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-wi
 </div>
 
 <div class="section-heading">
-  <div class="heading-left"><h1>My Properties</h1><span class="count" id="propertyCount">250 listings · 50 rows</span></div>
-  <button class="add-property-top" id="addPropertyTop" type="button">+ Property</button>
+  <div class="heading-left"><div class="heading-title-row"><h1>My Properties</h1><button class="add-property-top" id="addPropertyTop" type="button">+ Property</button></div><span class="count" id="propertyCount">250 listings · 50 rows</span></div>
   <div class="property-controls">
     <div class="filter-select"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.12 7-12a7 7 0 1 0-14 0c0 5.88 7 12 7 12Z"/><circle cx="12" cy="9" r="2.25"/></svg><select id="locationFilter" aria-label="Filter by location">
       <option value="all">All locations</option>
